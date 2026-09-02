@@ -1,0 +1,2513 @@
+{
+  "schema": 1,
+  "generated_for": "Solotech - touring media-server / LED processing package (Doja Cat lineage)",
+  "conventions": {
+    "label": "Devices are labelled Name over Make_Model, matching the GX3 as-built drawing.",
+    "socket_naming": "Socket names follow the as-built exactly where the as-built covers the device (e.g. '12G-SDI_IN A', '12G-SDI_OUT 1', 'HDMI_2.0 1', 'LAN A', 'MGMT', 'REF_IN', 'PWR_IN'). Devices not in the as-built follow the same grammar.",
+    "signals_in_asbuilt_legend": [
+      "12G-SDI",
+      "3G-SDI",
+      "ADAT",
+      "DP",
+      "DVI",
+      "HDMI1.4",
+      "HDMI2.0",
+      "LAN",
+      "LINE",
+      "LTC",
+      "MIDI",
+      "MMF",
+      "PWR",
+      "REF",
+      "USB"
+    ],
+    "signals_added_here": {
+      "10G": "Brompton Tessera 10G trunk (SX40 -> XD).",
+      "1G": "Brompton Tessera 1G output (XD -> fixtures).",
+      "SMF": "Single-mode fibre. The as-built legend only has MMF; the 1310nm links in this rig are single-mode.",
+      "DANTE": "Dante/AES67 audio network. Distinct from LAN so the audio network is traceable.",
+      "DMX": "DMX-512A (SX40 eDMX/DMX in and thru).",
+      "GPIO": "GPIO/COMM control (multiviewer)."
+    },
+    "connectors": "BNC, MICROBNC, HDMI, HDMI-C, DP, DVI, RJ45, EC5e, EC6A, LCDUP, LC, OpticalCON DUO, XLR3F, XLR3M, XLR5F, XLR5M, DB25, HD15, TRS, DIN5, TOSLINK, RCA, USB-A, USB-B, IEC, NAC3FX-W-TOP, NAC3MX-W-TOP, 4PIN-DC, DC. EC5e/EC6A and LCDUP are taken verbatim from the as-built legend.",
+    "confidence": {
+      "verified": "The socket exists and is named/typed from a manufacturer datasheet/manual or from the client's own as-built drawing. A per-socket note flags any part of the entry (usually the connector type) that is still an inference.",
+      "inferred": "The socket almost certainly exists but the source does not state it explicitly; reasoning is in the note.",
+      "assumed": "Placeholder. Do not cable against it without confirming."
+    },
+    "hard_rule": "No port in this file was invented to round out a device. Where a device is incomplete it is marked so rather than filled in."
+  },
+  "devices": [
+    {
+      "key": "sx40",
+      "name_pattern": "SX40 {n}",
+      "make": "Brompton",
+      "model": "Tessera SX40",
+      "qty": 3,
+      "rack_units": 2,
+      "role": "4K LED processor. Fed on HDMI 2.0 from the Lightware matrix; drives LED via 10G Tessera to XD units / fixtures.",
+      "sockets": [
+        {
+          "name": "HDMI2.0_IN",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "One HDMI 2.0b input, 18Gbps, up to 4096x2160. This is the show feed from the Lightware matrix."
+        },
+        {
+          "name": "12G-SDI_IN",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "One 12G-SDI input. NOT used for the rig's 3x 12G capture - that goes to the servers."
+        },
+        {
+          "name": "12G-SDI_THRU",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Re-clocked SDI thru port. BNC connector type inferred (not stated in datasheet text)."
+        },
+        {
+          "name": "REF_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Bi/Tri-level sync IN (rear panel callout 'Bi/Tri-Level Sync In & Thru'). BNC inferred."
+        },
+        {
+          "name": "REF_THRU",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Bi/Tri-level sync THRU. BNC inferred."
+        },
+        {
+          "name": "10G_OUT 1 Cu",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-T copper outputs, Neutrik etherCON Cat6A. Auto-switches with the matching Fib port - only one of the pair is used at a time."
+        },
+        {
+          "name": "10G_OUT 2 Cu",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-T copper outputs, Neutrik etherCON Cat6A. Auto-switches with the matching Fib port - only one of the pair is used at a time."
+        },
+        {
+          "name": "10G_OUT 3 Cu",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-T copper outputs, Neutrik etherCON Cat6A. Auto-switches with the matching Fib port - only one of the pair is used at a time."
+        },
+        {
+          "name": "10G_OUT 4 Cu",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-T copper outputs, Neutrik etherCON Cat6A. Auto-switches with the matching Fib port - only one of the pair is used at a time."
+        },
+        {
+          "name": "10G_OUT 1 Fib",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-LR fibre outputs, Neutrik opticalCON DUO / LC-Duplex, 1310nm SM. Same logical port as the matching Cu socket."
+        },
+        {
+          "name": "10G_OUT 2 Fib",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-LR fibre outputs, Neutrik opticalCON DUO / LC-Duplex, 1310nm SM. Same logical port as the matching Cu socket."
+        },
+        {
+          "name": "10G_OUT 3 Fib",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-LR fibre outputs, Neutrik opticalCON DUO / LC-Duplex, 1310nm SM. Same logical port as the matching Cu socket."
+        },
+        {
+          "name": "10G_OUT 4 Fib",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Four 10GBASE-LR fibre outputs, Neutrik opticalCON DUO / LC-Duplex, 1310nm SM. Same logical port as the matching Cu socket."
+        },
+        {
+          "name": "MGMT 1",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "'Two Gigabit Ethernet management network ports'. Rear callout: 'Management Ethernet'."
+        },
+        {
+          "name": "MGMT 2",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Second management port."
+        },
+        {
+          "name": "DMX_IN",
+          "dir": "in",
+          "signal": "DMX",
+          "connector": "XLR5F",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "'DMX-512A on 5-pin XLR in and thru'. Gender (F on input) inferred from DMX convention."
+        },
+        {
+          "name": "DMX_THRU",
+          "dir": "out",
+          "signal": "DMX",
+          "connector": "XLR5M",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "5-pin XLR DMX thru. Gender inferred."
+        },
+        {
+          "name": "DP_OUT",
+          "dir": "out",
+          "signal": "DP",
+          "connector": "DP",
+          "source": "https://www.cpl.tech/wp-content/uploads/2018/11/Brompton-SX40-Processor-Quick-Start-Guide.pdf",
+          "confidence": "verified",
+          "note": "DP++ v1.2 local-UI monitor output in the 'Local User Interface' rear section."
+        },
+        {
+          "name": "USB 1",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Two USB 3.0 ports on rear (local UI keyboard/mouse)."
+        },
+        {
+          "name": "USB 2",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Two USB 3.0 ports on rear."
+        },
+        {
+          "name": "USBFront 1",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Two USB 2.0 Type A on front panel."
+        },
+        {
+          "name": "USBFront 2",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "verified",
+          "note": "Two USB 2.0 Type A on front panel."
+        },
+        {
+          "name": "PWR_IN",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf",
+          "confidence": "inferred",
+          "note": "'Switched auto ranging mains input', 100-240V 1.2-0.6A. Datasheet does not state the IEC inlet type - confirm C14 vs C20 on the unit."
+        }
+      ],
+      "source": "https://www.bromptontech.com/wp-content/uploads/2025/07/Brompton-SX40-Data-Sheet-Feb2025-EN.pdf | https://www.cpl.tech/wp-content/uploads/2018/11/Brompton-SX40-Processor-Quick-Start-Guide.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "xd",
+      "name_pattern": "XD {n}",
+      "make": "Brompton",
+      "model": "Tessera XD",
+      "qty": null,
+      "rack_units": 2,
+      "role": "10G-to-1G Tessera data distribution downstream of the SX40s. Quantity is a function of the LED map - NOT YET KNOWN.",
+      "sockets": [
+        {
+          "name": "10G_IN Cu",
+          "dir": "in",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "One 10G Tessera copper input, etherCON Cat6A/Cat5e."
+        },
+        {
+          "name": "10G_IN Fib",
+          "dir": "in",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "One 10G Tessera fibre input, opticalCON DUO / LC-Duplex 1310nm SM up to 2km."
+        },
+        {
+          "name": "10G_THRU Cu",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "EC6A",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "inferred",
+          "note": "Datasheet states a 10G thru for daisy-chaining up to five further XDs with 'auto-switching between fibre and copper'; it does not enumerate the thru's physical connectors. Copper thru assumed by symmetry - CONFIRM on the unit."
+        },
+        {
+          "name": "10G_THRU Fib",
+          "dir": "out",
+          "signal": "10G",
+          "connector": "OpticalCON DUO",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "inferred",
+          "note": "See 10G_THRU Cu note."
+        },
+        {
+          "name": "1G_OUT 1",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 2",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 3",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 4",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 5",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 6",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 7",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 8",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 9",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "1G_OUT 10",
+          "dir": "out",
+          "signal": "1G",
+          "connector": "EC5e",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Ten 1G Tessera outputs on Neutrik etherCON. 525K px @ 8bpc 60Hz each. Cat rating (5e vs 6A) inferred from QSG 'Cat 5e or better'."
+        },
+        {
+          "name": "MGMT",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "Rear panel callout 'Management Ethernet'."
+        },
+        {
+          "name": "PWR_IN",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "NAC3FX-W-TOP",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "powerCON TRUE1 in."
+        },
+        {
+          "name": "PWR_THRU",
+          "dir": "out",
+          "signal": "PWR",
+          "connector": "NAC3MX-W-TOP",
+          "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+          "confidence": "verified",
+          "note": "powerCON TRUE1 through port for daisy-chaining power, 16A max."
+        }
+      ],
+      "source": "https://www.bromptontech.com/wp-content/uploads/2021/01/Brompton-XD-Data-Sheet-Jan2021.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "disguise_server",
+      "name_pattern": "SRV {n}",
+      "make": "disguise",
+      "model": "GX3",
+      "qty": 3,
+      "rack_units": 4,
+      "role": "Media server (Director / Actor / Understudy). 3x 12G-SDI capture in, 3x HDMI 2.0 VFC out into the Lightware matrix.",
+      "sockets": [
+        {
+          "name": "VFC Slot 1",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf) | DOJACAT_SERVER PULLSHEET.pdf",
+          "confidence": "inferred",
+          "note": "As-built shows three VFC slots per GX3. Pull sheet fits VFCHDMI20 'Single HDMI 2.0 VFC Card [4096x2160-60]' x6 across 2 servers = 3 per server, so each slot yields exactly ONE HDMI 2.0 output. These are the feeds into the Lightware matrix."
+        },
+        {
+          "name": "VFC Slot 2",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf) | DOJACAT_SERVER PULLSHEET.pdf",
+          "confidence": "inferred",
+          "note": "As-built shows three VFC slots per GX3. Pull sheet fits VFCHDMI20 'Single HDMI 2.0 VFC Card [4096x2160-60]' x6 across 2 servers = 3 per server, so each slot yields exactly ONE HDMI 2.0 output. These are the feeds into the Lightware matrix."
+        },
+        {
+          "name": "VFC Slot 3",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf) | DOJACAT_SERVER PULLSHEET.pdf",
+          "confidence": "inferred",
+          "note": "As-built shows three VFC slots per GX3. Pull sheet fits VFCHDMI20 'Single HDMI 2.0 VFC Card [4096x2160-60]' x6 across 2 servers = 3 per server, so each slot yields exactly ONE HDMI 2.0 output. These are the feeds into the Lightware matrix."
+        },
+        {
+          "name": "GUI_OUT",
+          "dir": "out",
+          "signal": "DP",
+          "connector": "DP",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "GUI/monitor output. As-built lists GUI_OUT; connector type not shown on the block - DP assumed from disguise convention. CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN A",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN B",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN C",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN D",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "12G-SDI_IN E",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN F",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN G",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN H",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "12G-SDI_IN I",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN J",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN K",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "3G-SDI_IN L",
+          "dir": "in",
+          "signal": "3G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Capture input, exactly as named on the as-built GX3 block. The three 12G-SDI inputs (A, E, I) are the rig's '3x 12G-SDI of capture'."
+        },
+        {
+          "name": "MGMT",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN A",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN B",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN C",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN D",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN E",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LINE_IN L",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Analogue line audio in - fed from the Dante breakout (Sonifex AVN-AIO8R)."
+        },
+        {
+          "name": "LINE_IN R",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LINE_OUT L",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Analogue line audio out - returns to the Dante breakout."
+        },
+        {
+          "name": "LINE_OUT R",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "ADAT_IN",
+          "dir": "in",
+          "signal": "ADAT",
+          "connector": "TOSLINK",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "As-built lists ADAT_IN. Connector (TOSLINK optical) inferred."
+        },
+        {
+          "name": "ADAT_OUT",
+          "dir": "out",
+          "signal": "ADAT",
+          "connector": "TOSLINK",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "MIDI_IN",
+          "dir": "in",
+          "signal": "MIDI",
+          "connector": "DIN5",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Connector DIN5 inferred."
+        },
+        {
+          "name": "MIDI_OUT",
+          "dir": "out",
+          "signal": "MIDI",
+          "connector": "DIN5",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Genlock in from the SPG."
+        },
+        {
+          "name": "USB 1",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "USB 2",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "USB 3",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "PWR_IN",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "NAC3FX-W-TOP",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "As-built PDU list shows 'Serv01/Serv02 (IEC to True1)', so the server inlet is powerCON TRUE1."
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf) | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified",
+      "open_question": "Model is carried forward from the as-built and pull sheet (both disguise GX3). The user said 'servers' without naming a model and the pull sheet is for 2 servers while this rig needs 3 (DIR/ACT/UND). CONFIRM model and count."
+    },
+    {
+      "key": "lightware_mx2",
+      "name_pattern": "RTR {n}",
+      "make": "Lightware",
+      "model": "MX2-16x16-HDMI20-R",
+      "qty": 1,
+      "rack_units": 2,
+      "role": "16x16 HDMI 2.0 matrix. The hub of the drawing: servers in, multiviewer in AND out, SX40s out.",
+      "sockets": [
+        {
+          "name": "HDMI_2.0 1",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 2",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 3",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 4",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 5",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 6",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 7",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 8",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 9",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 10",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 11",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 12",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 13",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 14",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 15",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 16",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Input side of the as-built Lightware block, named verbatim. Inputs and outputs share the same names on the drawing; direction disambiguates."
+        },
+        {
+          "name": "HDMI_2.0 1",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 2",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 3",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 4",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 5",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 6",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 7",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 8",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 9",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 10",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 11",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 12",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 13",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 14",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 15",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "HDMI_2.0 16",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Output side, named verbatim from the as-built."
+        },
+        {
+          "name": "LAN",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "PWR_IN 1",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Dual redundant PSU. As-built PDU list: 'RTR01 (IEC to True1)' x2 -- CONFIRM whether these inlets are IEC or TRUE1 on the actual unit."
+        },
+        {
+          "name": "PWR_IN 2",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified"
+    },
+    {
+      "key": "mv_9971",
+      "name_pattern": "MV {n}",
+      "make": "Cobalt Digital",
+      "model": "9971-MV6-4H-4K",
+      "qty": 1,
+      "rack_units": 0,
+      "role": "openGear multiviewer card. Takes feeds FROM Lightware matrix outputs and returns its picture TO Lightware matrix inputs. Lives in an OGX frame.",
+      "sockets": [
+        {
+          "name": "12G-SDI_IN 1",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN 2",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN 3",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN 4",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN 5",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_IN 6",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(6) 75 ohm inputs (max)', 12G/6G/3G/HD/SD. Connector type (BNC vs DIN 1.0/2.3 micro-BNC) depends on the openGear rear module fitted - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 1",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 2",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 3",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 4",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 5",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 6",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 7",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 8",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(8) 75 ohm outputs (max)'. Connector depends on rear module - CONFIRM."
+        },
+        {
+          "name": "HDMI2.0_IN 1",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI-C",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(4) HDMI 2.0; type C-mini connector' - present ONLY on the -4H variant. These are the feeds taken from Lightware matrix outputs."
+        },
+        {
+          "name": "HDMI2.0_IN 2",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI-C",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(4) HDMI 2.0; type C-mini connector' - present ONLY on the -4H variant. These are the feeds taken from Lightware matrix outputs."
+        },
+        {
+          "name": "HDMI2.0_IN 3",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI-C",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(4) HDMI 2.0; type C-mini connector' - present ONLY on the -4H variant. These are the feeds taken from Lightware matrix outputs."
+        },
+        {
+          "name": "HDMI2.0_IN 4",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI-C",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(4) HDMI 2.0; type C-mini connector' - present ONLY on the -4H variant. These are the feeds taken from Lightware matrix outputs."
+        },
+        {
+          "name": "HDMI2.0_OUT 1",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(2, max) HDMI 2.0 output; type A standard connector'. These return the MV picture to Lightware matrix inputs."
+        },
+        {
+          "name": "HDMI2.0_OUT 2",
+          "dir": "out",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "'(2, max) HDMI 2.0 output; type A standard connector'. These return the MV picture to Lightware matrix inputs."
+        },
+        {
+          "name": "LAN",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "10/100/1000 BaseT Ethernet port."
+        },
+        {
+          "name": "GPIO/COMM",
+          "dir": "io",
+          "signal": "GPIO",
+          "connector": "HD15",
+          "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/",
+          "confidence": "verified",
+          "note": "GPIO/COMM on HD-15."
+        }
+      ],
+      "source": "https://www.opengear.tv/card/cobalt-digital/9971-mv6-4k/ | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified",
+      "open_question": "Pull sheet code is 9971MV64K described as '6-In / 4 in HDMI', which matches the 9971-MV6-4H-4K (6 SDI + 4 HDMI in). If the plain 9971-MV6-4K was actually supplied there are NO HDMI inputs and every MV feed must arrive via the OG-HA5-12G HDMI->12G-SDI converters. CONFIRM the variant."
+    },
+    {
+      "key": "og_ha5_12g",
+      "name_pattern": "HA5 {n}",
+      "make": "AJA",
+      "model": "OG-HA5-12G",
+      "qty": 3,
+      "rack_units": 0,
+      "role": "openGear HDMI 2.0 -> 12G-SDI converter. Bridges HDMI-domain matrix outputs into the SDI domain (multiviewer SDI inputs / SDI router / FiDO to FOH).",
+      "sockets": [
+        {
+          "name": "HDMI2.0_IN",
+          "dir": "in",
+          "signal": "HDMI2.0",
+          "connector": "HDMI",
+          "source": "https://www.aja.com/products/og-ha5-12g",
+          "confidence": "verified",
+          "note": "HDMI 2.0 input."
+        },
+        {
+          "name": "12G-SDI_OUT 1",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.aja.com/products/og-ha5-12g",
+          "confidence": "verified",
+          "note": "Two 12G-SDI DA outputs. Connector depends on the openGear rear module - CONFIRM."
+        },
+        {
+          "name": "12G-SDI_OUT 2",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.aja.com/products/og-ha5-12g",
+          "confidence": "verified"
+        },
+        {
+          "name": "LINE_IN L",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "RCA",
+          "source": "https://www.aja.com/products/og-ha5-12g",
+          "confidence": "verified",
+          "note": "Two-channel analogue audio (RCA) input for embedding. Probably unused in this rig."
+        },
+        {
+          "name": "LINE_IN R",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "RCA",
+          "source": "https://www.aja.com/products/og-ha5-12g",
+          "confidence": "verified"
+        }
+      ],
+      "source": "https://www.aja.com/products/og-ha5-12g | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "ogx",
+      "name_pattern": "OGX{n}",
+      "make": "Ross Video",
+      "model": "Opengear Frame",
+      "qty": 3,
+      "rack_units": 2,
+      "role": "openGear card frame. Pull sheet carries 3: (1) DA + SPG frame, (2) fibre TX/RX frame, (3) multiviewer + HDMI->SDI converter frame.",
+      "sockets": [
+        {
+          "name": "REF1_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Frame reference input 1, verbatim from the as-built OGX block."
+        },
+        {
+          "name": "REF2_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "DashBoard control."
+        },
+        {
+          "name": "PWR_IN 1",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "inferred",
+          "note": "Not on the as-built OGX block itself; inferred from the as-built PDU list which shows 'OGX (IEC to IEC)' x2 = dual redundant PSU."
+        },
+        {
+          "name": "PWR_IN 2",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "inferred"
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified"
+    },
+    {
+      "key": "sra_8901_4",
+      "name_pattern": "DA{n}",
+      "make": "Ross Video",
+      "model": "SRA-8901-4",
+      "qty": 3,
+      "rack_units": 0,
+      "role": "1:4 12G-SDI DA. One per capture source, fanning each 12G capture feed to all three servers plus a spare.",
+      "sockets": [
+        {
+          "name": "12G-SDI_IN",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "12G-SDI_OUT 1",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "12G-SDI_OUT 2",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "12G-SDI_OUT 3",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "12G-SDI_OUT 4",
+          "dir": "out",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified",
+      "open_question": "The as-built used SRA-8901-4 (1:4). This rig's pull sheet instead lists R2_DRA890210R3 'DRA-8902-10, 2-channel reclocking 12G 2:10 DA card' x4, which is a different card with a different socket list. CONFIRM which DA is actually racked."
+    },
+    {
+      "key": "spg8260",
+      "name_pattern": "SPG{n}",
+      "make": "Ross Video",
+      "model": "SPG8260-R2",
+      "qty": 1,
+      "rack_units": 0,
+      "role": "Sync/reference generator. Genlocks the servers, the SX40s (bi/tri-level sync in) and the SDI plant.",
+      "sockets": [
+        {
+          "name": "REF_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF1_OUT A",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF1_OUT B",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF2_OUT A",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF2_OUT B",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF3_OUT A",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF3_OUT B",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF4_OUT A",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "REF4_OUT B",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "WC_OUT",
+          "dir": "out",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Word clock out."
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified",
+      "open_question": "As-built used the Ross SPG8260-R2 openGear card. This rig's pull sheet instead lists a Brainstorm DXD-8 reference generator with a PTP option. CONFIRM which generator is the house sync source."
+    },
+    {
+      "key": "sr112",
+      "name_pattern": "TC{n}",
+      "make": "Brainstorm",
+      "model": "SR-112",
+      "qty": 1,
+      "rack_units": 1,
+      "role": "Timecode distripalyzer: 1 LTC in -> 12 LTC out. Distributes timecode to the servers (via the MIF 4 interfaces). It carries NO Dante and NO audio.",
+      "sockets": [
+        {
+          "name": "LTC_IN",
+          "dir": "in",
+          "signal": "LTC",
+          "connector": "XLR3F",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Time code in: XLR female x1. SMPTE/EBU LTC."
+        },
+        {
+          "name": "LTC_OUT 1",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 2",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 3",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 4",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 5",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 6",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 7",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 8",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 1-8 are on a single DB-25 with Tascam/Avid analogue pinout - they are NOT eight separate rear connectors."
+        },
+        {
+          "name": "LTC_OUT 9",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 9-10 on XLR male."
+        },
+        {
+          "name": "LTC_OUT 10",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 9-10 on XLR male."
+        },
+        {
+          "name": "LTC_OUT 11",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "TRS",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 11-12 on 1/4in TRS jacks."
+        },
+        {
+          "name": "LTC_OUT 12",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "TRS",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Outputs 11-12 on 1/4in TRS jacks."
+        },
+        {
+          "name": "REF_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Video Ref: BNC x1."
+        },
+        {
+          "name": "LAN",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "Ethernet: RJ45 x1 (control/monitoring)."
+        },
+        {
+          "name": "PWR_IN 1",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "4PIN-DC",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified",
+          "note": "12VDC @5A, 4-pin circular. Two separate supplies for redundancy."
+        },
+        {
+          "name": "PWR_IN 2",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "4PIN-DC",
+          "source": "https://brainstormtime.com/products/sr-112/",
+          "confidence": "verified"
+        }
+      ],
+      "source": "https://brainstormtime.com/products/sr-112/",
+      "confidence": "verified",
+      "open_question": "The user said 'DANTE IS WIRED FOR SERVERS VIA SR112'. The SR-112 has no Dante port of any kind - see RIG-NOTES.md. CONFIRM the intended Dante path."
+    },
+    {
+      "key": "tr12d",
+      "name_pattern": "TCV{n}",
+      "make": "Glensound",
+      "model": "TR-12 (TR12D Dante option)",
+      "qty": 1,
+      "rack_units": 1,
+      "role": "Large-screen timecode viewer + 12-way LTC distribution. With the TR12D card it takes timecode FROM Dante and re-emits it as analogue LTC. This is the only Dante-to-timecode bridge in the package.",
+      "sockets": [
+        {
+          "name": "LTC_IN",
+          "dir": "in",
+          "signal": "LTC",
+          "connector": "XLR3F",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Timecode balanced XLR input, 3-pin."
+        },
+        {
+          "name": "LTC_OUT 1",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Four 3-pin XLR analogue LTC outputs."
+        },
+        {
+          "name": "LTC_OUT 2",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Four 3-pin XLR analogue LTC outputs."
+        },
+        {
+          "name": "LTC_OUT 3",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Four 3-pin XLR analogue LTC outputs."
+        },
+        {
+          "name": "LTC_OUT 4",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Four 3-pin XLR analogue LTC outputs."
+        },
+        {
+          "name": "LTC_OUT 5",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 6",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 7",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 8",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 9",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 10",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 11",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "LTC_OUT 12",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "DB25",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Eight further analogue outputs on ONE 25-pin d-type connector - not eight rear connectors."
+        },
+        {
+          "name": "DANTE",
+          "dir": "io",
+          "signal": "DANTE",
+          "connector": "EC6A",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "Manual: 'an RJ45 network Ethercon connection for connecting to a Dante/AES67 network'. ONE port, present only when the TR12D Dante option card is fitted; blanked off otherwise. Two Dante channels are selectable as the timecode source."
+        },
+        {
+          "name": "PWR_IN",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf",
+          "confidence": "verified",
+          "note": "IEC connector, 100-240VAC. The TR-12 does NOT run on PoE."
+        }
+      ],
+      "source": "https://www.glensound.co.uk/assets/library/696a54e0a1966-TR-12%20Timecode%20Reader%20Manual%20V2.pdf | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "avn_aio8r",
+      "name_pattern": "DANTE{n}",
+      "make": "Sonifex",
+      "model": "AVN-AIO8R",
+      "qty": 1,
+      "rack_units": 1,
+      "role": "8x8 dual-Dante <-> analogue line interface, PoE powered. This is what actually gets Dante audio to and from the servers' LINE_IN / LINE_OUT.",
+      "sockets": [
+        {
+          "name": "LINE_IN 1",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 2",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 3",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 4",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 5",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 6",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 7",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_IN 8",
+          "dir": "in",
+          "signal": "LINE",
+          "connector": "XLR3F",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue inputs on Neutrik XLR. Female gender on inputs inferred from audio convention."
+        },
+        {
+          "name": "LINE_OUT 1",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 2",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 3",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 4",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 5",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 6",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 7",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "LINE_OUT 8",
+          "dir": "out",
+          "signal": "LINE",
+          "connector": "XLR3M",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "8 analogue outputs on Neutrik XLR. Male gender inferred."
+        },
+        {
+          "name": "DANTE PRI",
+          "dir": "io",
+          "signal": "DANTE",
+          "connector": "RJ45",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "Dual RJ45 Dante/AES67 ports with PoE (the -R model). Primary."
+        },
+        {
+          "name": "DANTE SEC",
+          "dir": "io",
+          "signal": "DANTE",
+          "connector": "RJ45",
+          "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml",
+          "confidence": "verified",
+          "note": "Secondary/redundant Dante port, also PoE."
+        }
+      ],
+      "source": "https://www.sonifex.co.uk/avn/avn-aio8r.shtml | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "sw_m4350_24x4v",
+      "name_pattern": "SW{n}",
+      "make": "Netgear",
+      "model": "M4350-24X4V (XSM4328CV)",
+      "qty": 2,
+      "rack_units": 1,
+      "role": "Main managed switch. The two are trunked to each other over 25G SFP28 fibre - the user's 'connect network switches via fiber'.",
+      "sockets": [
+        {
+          "name": "LAN 1",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 2",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 3",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 4",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 5",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 6",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 7",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 8",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 9",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 10",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 11",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 12",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 13",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 14",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 15",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 16",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 17",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 18",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 19",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 20",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 21",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 22",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 23",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "LAN 24",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "24 x 10G/multi-gig copper ports, PoE+ (30W/port, 576W budget)."
+        },
+        {
+          "name": "SFP28 1",
+          "dir": "io",
+          "signal": "SMF",
+          "connector": "LCDUP",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "4 x 25G SFP28 for fibre uplink/stacking. Pull sheet fits NGS25GLROC 25G SMF 1310nm LC transceivers - this is the inter-switch fibre trunk."
+        },
+        {
+          "name": "SFP28 2",
+          "dir": "io",
+          "signal": "SMF",
+          "connector": "LCDUP",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "4 x 25G SFP28 for fibre uplink/stacking. Pull sheet fits NGS25GLROC 25G SMF 1310nm LC transceivers - this is the inter-switch fibre trunk."
+        },
+        {
+          "name": "SFP28 3",
+          "dir": "io",
+          "signal": "SMF",
+          "connector": "LCDUP",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "4 x 25G SFP28 for fibre uplink/stacking. Pull sheet fits NGS25GLROC 25G SMF 1310nm LC transceivers - this is the inter-switch fibre trunk."
+        },
+        {
+          "name": "SFP28 4",
+          "dir": "io",
+          "signal": "SMF",
+          "connector": "LCDUP",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "4 x 25G SFP28 for fibre uplink/stacking. Pull sheet fits NGS25GLROC 25G SMF 1310nm LC transceivers - this is the inter-switch fibre trunk."
+        },
+        {
+          "name": "PWR_IN 1",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "verified",
+          "note": "Second PSU is an option; fitting it gives 1+1 redundancy."
+        },
+        {
+          "name": "PWR_IN 2",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "IEC",
+          "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/",
+          "confidence": "inferred",
+          "note": "Only present if the optional second PSU is fitted. CONFIRM."
+        }
+      ],
+      "source": "https://www.netgear.com/business/wired/switches/fully-managed/xsm4328cv/ | DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "verified"
+    },
+    {
+      "key": "sw_m4250_40g8xf",
+      "name_pattern": "SW{n}",
+      "make": "Netgear",
+      "model": "M4250-40G8XF-PoE++",
+      "qty": 1,
+      "rack_units": 1,
+      "role": "1G PoE++ edge switch (pull sheet). Socket list NOT researched - placeholder only.",
+      "sockets": [],
+      "source": "DOJACAT_SERVER PULLSHEET.pdf",
+      "confidence": "assumed",
+      "open_question": "Present in the pull sheet (M425040G8XFPOE x1) but no sockets have been researched and the user did not mention it. Confirm whether it is in this rig before drawing it."
+    },
+    {
+      "key": "fido_2t_12g",
+      "name_pattern": "FTX{n}",
+      "make": "AJA",
+      "model": "FiDO-2T-12G",
+      "qty": 1,
+      "rack_units": 0,
+      "role": "2-channel 12G-SDI to single-mode LC fibre transmitter. Sends 12G-SDI to FOH.",
+      "sockets": [
+        {
+          "name": "12G-SDI_IN 1",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.aja.com/products/fido-2t-12g",
+          "confidence": "verified",
+          "note": "Two independent 12G-SDI BNC inputs. No loop/thru output is listed."
+        },
+        {
+          "name": "12G-SDI_IN 2",
+          "dir": "in",
+          "signal": "12G-SDI",
+          "connector": "BNC",
+          "source": "https://www.aja.com/products/fido-2t-12g",
+          "confidence": "verified"
+        },
+        {
+          "name": "FIBRE_OUT 1",
+          "dir": "out",
+          "signal": "SMF",
+          "connector": "LC",
+          "source": "https://www.aja.com/products/fido-2t-12g",
+          "confidence": "verified",
+          "note": "'2 simplex or 1 duplex connection (LC connector)', 1310nm SM, up to 10km. On this rig the pair lands as one opticalCON DUO tail on the fibre panel."
+        },
+        {
+          "name": "FIBRE_OUT 2",
+          "dir": "out",
+          "signal": "SMF",
+          "connector": "LC",
+          "source": "https://www.aja.com/products/fido-2t-12g",
+          "confidence": "verified"
+        },
+        {
+          "name": "DC_IN",
+          "dir": "in",
+          "signal": "PWR",
+          "connector": "DC",
+          "source": "https://www.aja.com/products/fido-2t-12g",
+          "confidence": "inferred",
+          "note": "5-20VDC, universal PSU included. Barrel connector type not stated in the spec sheet."
+        }
+      ],
+      "source": "https://www.aja.com/products/fido-2t-12g",
+      "confidence": "verified",
+      "open_question": "Variant choice: AJA makes NO 4-channel 12G FiDO. 12G options are FiDO-T-12G (1ch) and FiDO-2T-12G (2ch) only; FiDO-4T is 3G-SDI. FiDO-2T-12G picked because the show is 2x 4K (12G). Quantity depends on how many 12G channels FOH actually needs - CONFIRM."
+    },
+    {
+      "key": "mif4",
+      "name_pattern": "TCIntf{n}",
+      "make": "Rosendahl",
+      "model": "MIF 4",
+      "qty": 3,
+      "rack_units": 1,
+      "role": "LTC/MIDI/USB timecode interface. One per server: takes LTC from the SR-112 and presents timecode to the disguise machine over USB.",
+      "sockets": [
+        {
+          "name": "LTC_IN",
+          "dir": "in",
+          "signal": "LTC",
+          "connector": "XLR3F",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "As-built lists XLR3F/XLR3M alongside this block; gender mapping (in=F) inferred."
+        },
+        {
+          "name": "LTC_OUT",
+          "dir": "out",
+          "signal": "LTC",
+          "connector": "XLR3M",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "MIDI_IN",
+          "dir": "in",
+          "signal": "MIDI",
+          "connector": "DIN5",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "Connector DIN5 inferred."
+        },
+        {
+          "name": "MIDI_OUT",
+          "dir": "out",
+          "signal": "MIDI",
+          "connector": "DIN5",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "SYNC_IN",
+          "dir": "in",
+          "signal": "REF",
+          "connector": "BNC",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "As-built lists SYNC_IN; connector type not shown on the block - BNC inferred. CONFIRM."
+        },
+        {
+          "name": "USB2_IO",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-B",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified",
+          "note": "As-built shows USB-B/USB-A next to this block; USB-B (device side) inferred for the host link to the server."
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified",
+      "open_question": "As-built and the Doja rack layout both show 2x MIF 4. With 3 servers you need 3 if every server takes timecode. CONFIRM count."
+    },
+    {
+      "key": "xdip",
+      "name_pattern": "KVM{n}",
+      "make": "Adder",
+      "model": "XDIP",
+      "qty": 4,
+      "rack_units": 0,
+      "role": "KVM extender over IP, one per server plus the control PC.",
+      "sockets": [
+        {
+          "name": "HDMI1.4_IN",
+          "dir": "in",
+          "signal": "HDMI1.4",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "HDMI1.4_OUT",
+          "dir": "out",
+          "signal": "HDMI1.4",
+          "connector": "HDMI",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "USB",
+          "dir": "io",
+          "signal": "USB",
+          "connector": "USB-B",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "USB_OUT 1",
+          "dir": "out",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "USB_OUT 2",
+          "dir": "out",
+          "signal": "USB",
+          "connector": "USB-A",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        },
+        {
+          "name": "LAN",
+          "dir": "io",
+          "signal": "LAN",
+          "connector": "RJ45",
+          "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+          "confidence": "verified"
+        }
+      ],
+      "source": "as-built p1 (Disguise GX3 FullSize As Built.pdf)",
+      "confidence": "verified",
+      "open_question": "The as-built used Adder XDIP. This rig's pull sheet instead specifies ADDER Infinity ALIF4001T/ALIF4001R plus an AIM24V2 manager - a completely different socket list. CONFIRM which KVM system before drawing."
+    }
+  ]
+}

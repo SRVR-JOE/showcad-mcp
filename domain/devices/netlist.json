@@ -1,52 +1,777 @@
 {
-  "_comment": "Connection list derived from the user's spec. TWO confidence axes, because they differ: 'path_confidence' is how sure we are that A connects to B at all; 'port_confidence' is how sure we are of the SPECIFIC socket numbers. The user stated the paths. Almost every port assignment is ours and needs review \u2014 it is the first thing to hone in on. Nothing is drawn until the connect mechanism is proven.",
+  "_comment": "Emit domain/devices/netlist.json from the user's stated topology.\n\nEvery endpoint is validated against domain/devices/library.json before it is\nwritten, so a socket name that does not exist fails HERE rather than silently\nproducing a dangling circuit in Vectorworks.\n\nConfidence is two axes, because they differ sharply:\n  path_confidence  - did the user say A connects to B?\n  port_confidence  - are the specific socket numbers theirs, or ours?\nThe user stated paths. Every port number is ours until they say otherwise.\n",
   "_open": [
-    "EVERY port/socket number below is assigned by us, not stated by the user. Paths are from the user; port assignments are a first pass.",
-    "Server COUNT: pull sheet has 2x D3GX3. User says 'SERVERS' without a number. Assuming 2 -> 6 HDMI into matrix.",
-    "Third SX40 role: spare, redundancy pair, or third surface?",
-    "SR-112 carries timecode/sync, not Dante. Dante assumed on the Sonifex AVN-AIO8 per pull sheet.",
-    "Matrix output count to each SX40 depends on surface mapping - 2x4K show across 3 processors."
+    "EVERY port number here is ours, not the user's. Paths are theirs.",
+    "DA fan-out for capture is inferred - the user said 3x 12G-SDI capture but not how one feed reaches three servers.",
+    "Third SX40: device team reads it as a backup processor (2 carry the two 4K surfaces). Still consumes a matrix output either way.",
+    "SR-112 has NO Dante port (verified rear panel). Dante timecode is assumed to arrive via the Glensound TR-12D. Needs user yes/no.",
+    "XD count and the SX40->LED fan-out depend on the LED map, which we do not have. Two XDs shown as a placeholder.",
+    "Server model assumed GX3 from the pull sheet and as-built; the user said only \"disguise servers\", and 3 are needed where the sheet has 2."
   ],
+  "instances": {
+    "SRV DIR": "disguise_server",
+    "SRV ACT": "disguise_server",
+    "SRV UND": "disguise_server",
+    "RTR 1": "lightware_mx2",
+    "SX40 1": "sx40",
+    "SX40 2": "sx40",
+    "SX40 3": "sx40",
+    "MV 1": "mv_9971",
+    "HA5 1": "og_ha5_12g",
+    "HA5 2": "og_ha5_12g",
+    "HA5 3": "og_ha5_12g",
+    "DA 1": "sra_8901_4",
+    "DA 2": "sra_8901_4",
+    "DA 3": "sra_8901_4",
+    "SPG 1": "spg8260",
+    "SR112": "sr112",
+    "TR12D": "tr12d",
+    "AVN-AIO8R": "avn_aio8r",
+    "MIF4 1": "mif4",
+    "MIF4 2": "mif4",
+    "MIF4 3": "mif4",
+    "SW01": "sw_m4350_24x4v",
+    "SW02": "sw_m4350_24x4v",
+    "FIDO TX": "fido_2t_12g",
+    "XD 1": "xd",
+    "XD 2": "xd"
+  },
   "circuits": [
     {
-      "n": 1,
+      "n": 10,
       "src": [
-        "CAM/CAPTURE 1",
-        "12G-SDI OUT"
+        "DA 1",
+        "12G-SDI_OUT 1"
       ],
       "dst": [
-        "SRV 1",
+        "SRV DIR",
         "12G-SDI_IN A"
       ],
       "signal": "12G-SDI",
       "cable": "BNC",
       "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
+      "port_confidence": "assigned_by_us",
+      "note": "capture 1 to SRV DIR (DA fan-out inferred, not stated)"
     },
     {
-      "n": 2,
+      "n": 20,
       "src": [
-        "CAM/CAPTURE 2",
-        "12G-SDI OUT"
+        "DA 1",
+        "12G-SDI_OUT 2"
       ],
       "dst": [
-        "SRV 1",
+        "SRV ACT",
+        "12G-SDI_IN A"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 1 to SRV ACT (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 30,
+      "src": [
+        "DA 1",
+        "12G-SDI_OUT 3"
+      ],
+      "dst": [
+        "SRV UND",
+        "12G-SDI_IN A"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 1 to SRV UND (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 40,
+      "src": [
+        "DA 2",
+        "12G-SDI_OUT 1"
+      ],
+      "dst": [
+        "SRV DIR",
         "12G-SDI_IN E"
       ],
       "signal": "12G-SDI",
       "cable": "BNC",
       "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 2 to SRV DIR (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 50,
+      "src": [
+        "DA 2",
+        "12G-SDI_OUT 2"
+      ],
+      "dst": [
+        "SRV ACT",
+        "12G-SDI_IN E"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 2 to SRV ACT (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 60,
+      "src": [
+        "DA 2",
+        "12G-SDI_OUT 3"
+      ],
+      "dst": [
+        "SRV UND",
+        "12G-SDI_IN E"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 2 to SRV UND (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 70,
+      "src": [
+        "DA 3",
+        "12G-SDI_OUT 1"
+      ],
+      "dst": [
+        "SRV DIR",
+        "12G-SDI_IN I"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 3 to SRV DIR (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 80,
+      "src": [
+        "DA 3",
+        "12G-SDI_OUT 2"
+      ],
+      "dst": [
+        "SRV ACT",
+        "12G-SDI_IN I"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 3 to SRV ACT (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 90,
+      "src": [
+        "DA 3",
+        "12G-SDI_OUT 3"
+      ],
+      "dst": [
+        "SRV UND",
+        "12G-SDI_IN I"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "capture 3 to SRV UND (DA fan-out inferred, not stated)"
+    },
+    {
+      "n": 100,
+      "src": [
+        "SRV DIR",
+        "VFC Slot 1"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 1"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
       "port_confidence": "assigned_by_us"
     },
     {
-      "n": 3,
+      "n": 110,
       "src": [
-        "CAM/CAPTURE 3",
-        "12G-SDI OUT"
+        "SRV DIR",
+        "VFC Slot 2"
       ],
       "dst": [
-        "SRV 1",
-        "12G-SDI_IN I"
+        "RTR 1",
+        "HDMI_2.0 2"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 120,
+      "src": [
+        "SRV DIR",
+        "VFC Slot 3"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 3"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 130,
+      "src": [
+        "SRV ACT",
+        "VFC Slot 1"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 4"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 140,
+      "src": [
+        "SRV ACT",
+        "VFC Slot 2"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 5"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 150,
+      "src": [
+        "SRV ACT",
+        "VFC Slot 3"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 6"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 160,
+      "src": [
+        "SRV UND",
+        "VFC Slot 1"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 7"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 170,
+      "src": [
+        "SRV UND",
+        "VFC Slot 2"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 8"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 180,
+      "src": [
+        "SRV UND",
+        "VFC Slot 3"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 9"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 190,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 1"
+      ],
+      "dst": [
+        "SX40 1",
+        "HDMI2.0_IN"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 200,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 2"
+      ],
+      "dst": [
+        "SX40 2",
+        "HDMI2.0_IN"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 210,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 3"
+      ],
+      "dst": [
+        "SX40 3",
+        "HDMI2.0_IN"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 220,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 13"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI2.0_IN 1"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 230,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 14"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI2.0_IN 2"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 240,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 15"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI2.0_IN 3"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 250,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 16"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI2.0_IN 4"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 260,
+      "src": [
+        "MV 1",
+        "HDMI2.0_OUT 1"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 15"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "MV RETURN - right-to-left edge, render as panel cross-reference"
+    },
+    {
+      "n": 270,
+      "src": [
+        "MV 1",
+        "HDMI2.0_OUT 2"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 16"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "MV RETURN - right-to-left edge, render as panel cross-reference"
+    },
+    {
+      "n": 280,
+      "src": [
+        "TR12D",
+        "LTC_OUT 1"
+      ],
+      "dst": [
+        "SR112",
+        "LTC_IN"
+      ],
+      "signal": "LTC",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante timecode lands on TR12D, converted to LTC - NEEDS USER CONFIRMATION"
+    },
+    {
+      "n": 290,
+      "src": [
+        "SR112",
+        "LTC_OUT 1"
+      ],
+      "dst": [
+        "MIF4 1",
+        "LTC_IN"
+      ],
+      "signal": "LTC",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 300,
+      "src": [
+        "SR112",
+        "LTC_OUT 2"
+      ],
+      "dst": [
+        "MIF4 2",
+        "LTC_IN"
+      ],
+      "signal": "LTC",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 310,
+      "src": [
+        "SR112",
+        "LTC_OUT 3"
+      ],
+      "dst": [
+        "MIF4 3",
+        "LTC_IN"
+      ],
+      "signal": "LTC",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 320,
+      "src": [
+        "MIF4 1",
+        "USB2_IO"
+      ],
+      "dst": [
+        "SRV DIR",
+        "USB 1"
+      ],
+      "signal": "USB",
+      "cable": "USB",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "timecode into the server over USB - the GX3 has no LTC input"
+    },
+    {
+      "n": 330,
+      "src": [
+        "MIF4 2",
+        "USB2_IO"
+      ],
+      "dst": [
+        "SRV ACT",
+        "USB 1"
+      ],
+      "signal": "USB",
+      "cable": "USB",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "timecode into the server over USB - the GX3 has no LTC input"
+    },
+    {
+      "n": 340,
+      "src": [
+        "MIF4 3",
+        "USB2_IO"
+      ],
+      "dst": [
+        "SRV UND",
+        "USB 1"
+      ],
+      "signal": "USB",
+      "cable": "USB",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "timecode into the server over USB - the GX3 has no LTC input"
+    },
+    {
+      "n": 350,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 1"
+      ],
+      "dst": [
+        "SRV DIR",
+        "LINE_IN L"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 360,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 2"
+      ],
+      "dst": [
+        "SRV DIR",
+        "LINE_IN R"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 370,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 3"
+      ],
+      "dst": [
+        "SRV ACT",
+        "LINE_IN L"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 380,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 4"
+      ],
+      "dst": [
+        "SRV ACT",
+        "LINE_IN R"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 390,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 5"
+      ],
+      "dst": [
+        "SRV UND",
+        "LINE_IN L"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 400,
+      "src": [
+        "AVN-AIO8R",
+        "LINE_OUT 6"
+      ],
+      "dst": [
+        "SRV UND",
+        "LINE_IN R"
+      ],
+      "signal": "LINE",
+      "cable": "XLR3",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante audio breakout - inferred path"
+    },
+    {
+      "n": 410,
+      "src": [
+        "SPG 1",
+        "REF1_OUT A"
+      ],
+      "dst": [
+        "SRV DIR",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 420,
+      "src": [
+        "SPG 1",
+        "REF1_OUT B"
+      ],
+      "dst": [
+        "SRV ACT",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 430,
+      "src": [
+        "SPG 1",
+        "REF2_OUT A"
+      ],
+      "dst": [
+        "SRV UND",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 440,
+      "src": [
+        "SPG 1",
+        "REF3_OUT A"
+      ],
+      "dst": [
+        "SX40 1",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 450,
+      "src": [
+        "SPG 1",
+        "REF3_OUT B"
+      ],
+      "dst": [
+        "SX40 2",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 460,
+      "src": [
+        "SPG 1",
+        "REF4_OUT A"
+      ],
+      "dst": [
+        "SX40 3",
+        "REF_IN"
+      ],
+      "signal": "REF",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 470,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 10"
+      ],
+      "dst": [
+        "HA5 1",
+        "HDMI2.0_IN"
+      ],
+      "signal": "HDMI2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 480,
+      "src": [
+        "HA5 1",
+        "12G-SDI_OUT 1"
+      ],
+      "dst": [
+        "FIDO TX",
+        "12G-SDI_IN 1"
       ],
       "signal": "12G-SDI",
       "cable": "BNC",
@@ -54,293 +779,160 @@
       "port_confidence": "assigned_by_us"
     },
     {
-      "n": 10,
-      "src": [
-        "SRV 1",
-        "VFC Slot 1 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 1"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 11,
-      "src": [
-        "SRV 1",
-        "VFC Slot 2 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 2"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 12,
-      "src": [
-        "SRV 1",
-        "VFC Slot 3 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 3"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 13,
-      "src": [
-        "SRV 2",
-        "VFC Slot 1 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 4"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 14,
-      "src": [
-        "SRV 2",
-        "VFC Slot 2 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 5"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 15,
-      "src": [
-        "SRV 2",
-        "VFC Slot 3 HDMI"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 6"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 20,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 1"
-      ],
-      "dst": [
-        "SX40 1",
-        "HDMI IN"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 21,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 2"
-      ],
-      "dst": [
-        "SX40 2",
-        "HDMI IN"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 22,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 3"
-      ],
-      "dst": [
-        "SX40 3",
-        "HDMI IN"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 30,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 13"
-      ],
-      "dst": [
-        "MV 1",
-        "HDMI IN 1"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 31,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 14"
-      ],
-      "dst": [
-        "MV 1",
-        "HDMI IN 2"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 32,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 15"
-      ],
-      "dst": [
-        "MV 1",
-        "HDMI IN 3"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 33,
-      "src": [
-        "RTR 1",
-        "HDMI_2.0 OUT 16"
-      ],
-      "dst": [
-        "MV 1",
-        "HDMI IN 4"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 34,
+      "n": 490,
       "src": [
         "MV 1",
-        "HDMI OUT 1"
+        "12G-SDI_OUT 1"
       ],
       "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 15"
+        "FIDO TX",
+        "12G-SDI_IN 2"
       ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "note": "MV return - RIGHT-TO-LEFT edge, draw as panel cross-reference",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 35,
-      "src": [
-        "MV 1",
-        "HDMI OUT 2"
-      ],
-      "dst": [
-        "RTR 1",
-        "HDMI_2.0 IN 16"
-      ],
-      "signal": "HDMI 2.0",
-      "cable": "HDMI",
-      "note": "MV return - cross-reference",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 40,
-      "src": [
-        "SR112",
-        "LTC OUT 1"
-      ],
-      "dst": [
-        "SRV 1",
-        "LTC IN"
-      ],
-      "signal": "LTC",
+      "signal": "12G-SDI",
       "cable": "BNC",
       "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
+      "port_confidence": "assigned_by_us",
+      "note": "multiview to FOH"
     },
     {
-      "n": 41,
-      "src": [
-        "SR112",
-        "LTC OUT 2"
-      ],
-      "dst": [
-        "SRV 2",
-        "LTC IN"
-      ],
-      "signal": "LTC",
-      "cable": "BNC",
-      "path_confidence": "stated",
-      "port_confidence": "assigned_by_us"
-    },
-    {
-      "n": 50,
+      "n": 500,
       "src": [
         "SW01",
-        "SFP+ 1"
+        "SFP28 1"
       ],
       "dst": [
         "SW02",
-        "SFP+ 1"
+        "SFP28 1"
       ],
-      "signal": "10GbE",
-      "cable": "FIBER",
-      "note": "switch trunk over fiber",
+      "signal": "SMF",
+      "cable": "LC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "switch-to-switch fibre trunk"
+    },
+    {
+      "n": 510,
+      "src": [
+        "SW01",
+        "SFP28 2"
+      ],
+      "dst": [
+        "SW02",
+        "SFP28 2"
+      ],
+      "signal": "SMF",
+      "cable": "LC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "redundant trunk - inferred, not stated"
+    },
+    {
+      "n": 520,
+      "src": [
+        "AVN-AIO8R",
+        "DANTE PRI"
+      ],
+      "dst": [
+        "SW01",
+        "LAN 1"
+      ],
+      "signal": "DANTE",
+      "cable": "EC6A",
       "path_confidence": "stated",
       "port_confidence": "assigned_by_us"
     },
     {
-      "n": 60,
+      "n": 530,
       "src": [
-        "FIDO TX 1",
-        "FIBER OUT"
+        "TR12D",
+        "DANTE"
       ],
       "dst": [
-        "FOH PANEL",
-        "FIBER IN 1"
+        "SW01",
+        "LAN 2"
       ],
-      "signal": "12G-SDI over fiber",
-      "cable": "FIBER",
-      "note": "FOH run - panel cross-reference",
+      "signal": "DANTE",
+      "cable": "EC6A",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "Dante timecode onto the network"
+    },
+    {
+      "n": 540,
+      "src": [
+        "SRV DIR",
+        "LAN A"
+      ],
+      "dst": [
+        "SW01",
+        "LAN 3"
+      ],
+      "signal": "LAN",
+      "cable": "EC6A",
       "path_confidence": "stated",
       "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 550,
+      "src": [
+        "SRV ACT",
+        "LAN A"
+      ],
+      "dst": [
+        "SW01",
+        "LAN 4"
+      ],
+      "signal": "LAN",
+      "cable": "EC6A",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 560,
+      "src": [
+        "SRV UND",
+        "LAN A"
+      ],
+      "dst": [
+        "SW01",
+        "LAN 5"
+      ],
+      "signal": "LAN",
+      "cable": "EC6A",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 570,
+      "src": [
+        "SX40 1",
+        "10G_OUT 1 Fib"
+      ],
+      "dst": [
+        "XD 1",
+        "10G_IN Fib"
+      ],
+      "signal": "10G",
+      "cable": "OpticalCON DUO",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "XD count depends on the LED map - NOT yet known"
+    },
+    {
+      "n": 580,
+      "src": [
+        "SX40 2",
+        "10G_OUT 1 Fib"
+      ],
+      "dst": [
+        "XD 2",
+        "10G_IN Fib"
+      ],
+      "signal": "10G",
+      "cable": "OpticalCON DUO",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us",
+      "note": "XD count depends on the LED map - NOT yet known"
     }
   ]
 }
