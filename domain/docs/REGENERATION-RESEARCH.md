@@ -17,6 +17,13 @@ vs.ResetObject(h)                                  # flags the object for regene
 # ---- read the result in a SEPARATE, LATER script execution ----
 ```
 
+For many objects of one type at once, the practitioner-standard form — same semantics,
+one clean pass per PIO type:
+
+```python
+vs.ForEachObject(vs.ResetObject, "PON='Circuit'")   # PON = Plug-in Object Name
+```
+
 **And: our evidence that regeneration is broken is almost certainly a measurement
 artefact.** Vectorworks documents, in the official `ResetObject` remarks, that
 `ResetObject` *sets a flag* and that the object does not regenerate until the current
@@ -28,6 +35,12 @@ script has finished — and it names our exact test as the thing you must not do
 > regenerated**, and if you're still within the script of another object, this hasn't
 > happened yet."
 > — [VS:ResetObject, Remarks](https://github.com/Vectorworks/developer-scripting/blob/main/Function%20Reference/Functions/ResetObject.md)
+
+Josh Benghiat, on the official board, says the same thing in one sentence:
+
+> "**Script-based plug-ins run linearly, so the resets actually happen after the script
+> completes.**"
+> — JBenghiat, [Reset Object & Active Layer](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/), 2021
 
 Every measurement in `CONNECT-MECHANISM.md` §3.3 and `MACOS-EXECUTOR.md` §2 —
 `GetBBox` before/after `ResetObject`, and `GetBBox` on a freshly
@@ -234,6 +247,28 @@ ConnectCAD is a compiled C++ plug-in, so Device / Socket / Circuit are SDK param
 not VectorScript `.vso`s. It is untested by us and it is write-only, so there is no way
 to read back whether it took; the test is behavioural.
 
+Practitioners do use it from Python. In a 2024 thread, `spettitt` (356 reputation)
+answers "I'm looking for a function who can update/redraw/regenerate all the plug-in
+object in the model" with:
+
+> "`vs.SetObjectVariableBoolean(h, 1167, True)` — This will reset handle h. For all
+> PIOs of a given type, you'll need to loop through them or `vs.ForEachObject` loop
+> through them."
+> …and, when that didn't help the OP: "Maybe try `vs.ResetObject(h)`. If not, **that's
+> pretty much the gamut of reset options**, so it might not be a reset issue."
+> — [Call redraw for plug-in object](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/), 2024-07-08
+
+Two things to take from that. First, `1167` is a real, usable Python call, not a
+theoretical table row. Second, an experienced developer's summary of the entire space
+is "`ResetObject` and `1167`, that's the gamut" — which matches the exhaustive negative
+results in this section. There is no hidden function.
+
+(That OP's own case — Door/Window PIOs failing to redraw after a *wall component*
+change — was ultimately fixed by `vs.UpdateStyledObjects('StyleName')`, not by either
+reset. That is a different trigger from ours, so it is not evidence against `1167` for
+a parameter change; but it is a real data point that `1167` and `ResetObject` do not
+cover every case.)
+
 There is **no** `Needs Update`-style dirty flag for PIOs. Selector 1004 ("Needs Update")
 lives in the **Viewports** table, not the plug-in table — do not repurpose it.
 
@@ -285,6 +320,13 @@ The nearest thing to a documented bulk regeneration that is an actual `vs.` func
 Only useful if the objects are instances of a named plug-in style. ConnectCAD circuits
 are not being driven from a style, so this is almost certainly inapplicable — but it is
 the *safe* member of the `UpdatePIOFromStyle` family and worth knowing exists.
+
+It is also the call that actually solved the 2024 forum case above, after both
+`ResetObject` and object variable 1167 had failed there — *"This works ->
+`vs.UpdateStyledObjects('StyleName')`"*
+([topic 117975](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/)).
+Worth a five-second check of whether any ConnectCAD object we touch reports a style
+name; if one does, this becomes cheap and safe row in §7.
 
 ### Regeneration pause prefs — read-only, so this door is shut
 
@@ -643,7 +685,8 @@ we crashed Vectorworks last time, and it destroys the ability to attribute the r
 | **4** | Stop using `GetBBox` as the oracle. Use `vs.FInGroup(h)` / child count, and `CC_GetCircuitSource`. | Child contents are produced *by* the recalculate; they are a more direct witness than a projected box. `CC_*` getters are already our established ground truth. | None | Object Events; `CONNECT-MECHANISM.md` §1 |
 | **4b** | `vs.ForEachObject(vs.ResetObject, "PON='Circuit'")` — one PIO type per dispatch. | The practitioner-standard bulk reset, from Josh Benghiat. Targeted, no menu command, no document-wide cost, and it aligns with the documented per-type batching so each dispatch does one clean pass. | Very low | [forum.vectorworks.net/topic/82571](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/) |
 | **5** | `vs.HMove(h, 0.0, 0.0)` immediately after creating/writing, before `ResetObject`. | Documented workaround for the exact "a .vsm created a .vso and it won't regen" case. Only effective if that PIO has Reset on Move. | Very low — a zero-distance move. | `ReDraw.md` remarks |
-| **6** | `vs.SetObjectVariableBoolean(h, 1167, True)` — **Immediate Reset** — then `ResetObject(h)`. | The only documented lever for a synchronous rather than flagged reset. Its "SDK parametric objects only" restriction is satisfied: ConnectCAD is compiled C++. | Low-moderate. Write-only, undocumented beyond one table row, and it changes reset *timing* — try it on a scratch stock PIO first, never first on a real circuit. | Appendix G, Plug-in Objects |
+| **6** | `vs.SetObjectVariableBoolean(h, 1167, True)` — **Immediate Reset** — then `ResetObject(h)`. | The only documented lever for a synchronous rather than flagged reset, and a call practitioners actually use from Python. Its "SDK parametric objects only" restriction is satisfied: ConnectCAD is compiled C++. | Low-moderate. Write-only, undocumented beyond one table row, and it changes reset *timing* — try it on a scratch stock PIO first, never first on a real circuit. | Appendix G, Plug-in Objects; [topic 117975](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/) |
+| **6b** | If any ConnectCAD object reports a plug-in style name: `vs.UpdateStyledObjects('<style>')`. | Solved the 2024 forum case after `ResetObject` and 1167 both failed there. Documented, argument-taking, VW2017+. | Low | [UpdateStyledObjects.md](https://github.com/Vectorworks/developer-scripting/blob/main/Function%20Reference/Functions/UpdateStyledObjects.md); [topic 117975](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/) |
 | **7** | `vs.CreateDuplicateObject(src, hDevice)` in place of `HDuplicate` + `SetParent` for socket attach. | Documented replacement for exactly the `SetParent`-into-a-PIO failure we hit. | Low | `SetParent.md`, `CreateDuplicateObject.md` |
 | **8** | `vs.DoMenuTextByName('Reset All Plug-Ins', 0)` — **once, alone, in its own dispatch**, then read in the next. Note the capital `I`. | Document-wide reset. Completed safely once in our own session. Present in the ConnectCAD workspace (verified in `ConnectCAD.vww`), so it will not silently no-op. | Moderate. Document-wide; slow on a large file; not a per-object call. | `DoMenuTextByName.md`; VW Help; `ConnectCAD.vww` |
 | **9** | Julian Carr's `GetPrefInt(56)` / `SetPrefInt(56, half)` / re-activate layer / restore. | Documented document-wide geometry invalidation. | **High.** Same class as `SetLayerScale`, which is a prime suspect for the §3.4 crash. Only after 1–8, only from a genuine menu-command dispatch, only on a scratch document. | `ReDraw.md` remarks |
@@ -672,7 +715,7 @@ Vectorworks. Keep that justification; retire this one until §2.3 confirms it.
 If §2.3 comes back green in both contexts, a day of executor work is unnecessary and
 the real ConnectCAD blocker is narrower than we thought: not "regeneration is dead",
 but "the Circuit PIO's bind does not fire from a record-field change alone", for which
-§7 rows 3, 4 and 6 are the live hypotheses and `Make Connections from List`
+§7 rows 3, 4b and 6 are the live hypotheses and `Make Connections from List`
 (`CONNECT-MECHANISM.md` §4) remains the supported fallback.
 
 ---
@@ -696,8 +739,13 @@ but "the Circuit PIO's bind does not fire from a record-field change alone", for
 - [Vectorworks/developer-sdk](https://github.com/Vectorworks/developer-sdk) — `ISDK::ResetObject`.
 - [Vectorworks Help: Resetting plug-in objects from previous versions](http://app-help.vectorworks.net/2024/eng/VW2024_Guide/Start/Resetting_plug-in_objects_from_previous_versions.htm).
 - [forum.vectorworks.net topic 82571 — "Reset Object & Active Layer"](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/)
-  (Martin Crawford / JBenghiat, April 2021). The forum 403s direct fetches; read it via
-  `https://r.jina.ai/<url>`.
+  (Martin Crawford / JBenghiat, April 2021) — "resets actually happen after the script
+  completes"; the `ForEachObject` + `PON=` idiom.
+- [forum.vectorworks.net topic 117975 — "Call redraw for plug-in object"](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/)
+  (spettitt, July 2024) — object variable 1167 in Python; "that's pretty much the gamut
+  of reset options"; `UpdateStyledObjects` as the working fallback.
+- The forum 403s direct fetches. Read any thread via `https://r.jina.ai/<forum-url>`;
+  that worked reliably for both threads above.
 - `/Applications/Vectorworks 2026/Workspaces/ConnectCAD.vww` — the verified universal
   menu name `Reset_x20All_x20Plug_x2dIns`.
 - Local: `vwx-plugin/vs_index.json` (3078 functions),
