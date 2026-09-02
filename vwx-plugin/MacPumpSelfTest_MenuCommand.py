@@ -5,7 +5,7 @@
 # THE ACCEPTANCE TEST.  It answers one question: does the Vectorworks
 # parametric engine run in this execution context?
 #
-#   phase 1  CreateCustomObjectN('Angle'|'Ball Bearing'|'Base Cabinet', 5, 5,
+#   phase 1  CreateCustomObjectN('Angle'|'Ball Bearing'|'Base Cabinet', (5,5),
 #            0, False) -> bbox.  Under the legacy dialog bridge every bbox is
 #            ((0,0),(0,0)) and FInGroup is empty.  A NON-ZERO bbox is the pass.
 #            The probe objects are deleted again.

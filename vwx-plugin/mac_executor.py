@@ -12,7 +12,7 @@ event loop, Vectorworks does NOT run the parametric engine: object creation
 and record writes work, but plug-in objects never regenerate.  Proof, live:
 
     for nm in ('Angle', 'Ball Bearing', 'Base Cabinet'):
-        h = vs.CreateCustomObjectN(nm, 5.0, 5.0, 0, False)
+        h = vs.CreateCustomObjectN(nm, (5.0, 5.0), 0, False)
         vs.GetBBox(h)        # -> ((0,0),(0,0)),  FInGroup(h) empty
 
 Stock Vectorworks plug-ins, nothing to do with ConnectCAD.  So no ConnectCAD
@@ -501,17 +501,15 @@ def _bbox(h):
 
 
 def _create_pio(name, x, y):
-    """CreateCustomObjectN, tolerant of the flattened-point call shape.
+    """CreateCustomObjectN(objectName, p, rotationAngle, showPref) -- p is a POINT.
 
-    The index signature is (objectName, p, rotationAngle, showPref) with p a
-    POINT; the live-verified call in domain/docs/CONNECT-MECHANISM.md passes
-    the point flattened as two arguments.  Try that first, fall back to the
-    tuple form.
+    The flattened five-argument form is WRONG and does not raise TypeError:
+    Vectorworks accepts the call, reads x into `p`, y into `rotationAngle`,
+    and fails inside the plug-in with "incorrect angle format ... unexpected
+    characters expected in angle".  That surfaced as a user-visible error, so
+    the tuple form is the only one used here.
     """
-    try:
-        return vs.CreateCustomObjectN(name, x, y, 0, False)
-    except TypeError:
-        return vs.CreateCustomObjectN(name, (x, y), 0, False)
+    return vs.CreateCustomObjectN(name, (x, y), 0, False)
 
 
 def _count_children(h):
