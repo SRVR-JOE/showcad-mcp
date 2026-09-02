@@ -28,20 +28,40 @@ def norm(s):
 vs.NameUndoEvent('ShowCAD step 1: cleanup + connector text')
 
 # ── 1. is the parametric engine alive in THIS context? ────────────────────
+# Probed WITHOUT creating anything. The earlier version called
+# CreateCustomObjectN('Angle', 5.0, 5.0, 0, False), which is wrong: the real
+# signature is (objectName, p, rotationAngle, showPref) with p a POINT TUPLE,
+# so the surplus argument pushed 5.0 into the angle slot and Vectorworks
+# reported "incorrect angle format". Toggling a field on an existing circuit
+# answers the same question and creates nothing in the user's drawing.
+_probe_circuits = []
+def _probe_collect(h):
+    pr = vs.GetParametricRecord(h)
+    if pr and vs.GetName(pr) == 'Circuit':
+        _probe_circuits.append(h)
+vs.ForEachObject(_probe_collect, "(ALL)")
+
 try:
-    try:
-        vs.CreateCustomObjectN('Angle', 5.0, 5.0, 0, False)
-    except TypeError:
-        vs.CreateCustomObjectN('Angle', (5.0, 5.0), 0, False)
-    p = vs.LNewObj()
-    if p:
-        bb = vs.GetBBox(p)
-        flat = []
-        for part in bb:
-            flat.extend(part) if isinstance(part, (tuple, list)) else flat.append(part)
-        rep['probe_bbox'] = [round(float(v), 4) for v in flat]
-        rep['engine_runs'] = any(abs(float(v)) > 1e-9 for v in flat)
-        vs.DelObject(p)
+    if _probe_circuits:
+        ph = _probe_circuits[0]
+        def _flat(h):
+            bb = vs.GetBBox(h)
+            o = []
+            for part in bb:
+                o.extend(part) if isinstance(part, (tuple, list)) else o.append(part)
+            return [round(float(v), 6) for v in o]
+        b0 = _flat(ph)
+        keep = vs.GetRField(ph, 'Circuit', 'Number')
+        vs.SetRField(ph, 'Circuit', 'Number', 'ENGINEPROBE')
+        vs.ResetObject(ph)
+        b1 = _flat(ph)
+        vs.SetRField(ph, 'Circuit', 'Number', keep)
+        vs.ResetObject(ph)
+        rep['probe_bbox_before'] = b0
+        rep['probe_bbox_after'] = b1
+        rep['engine_runs'] = (b0 != b1)
+    else:
+        rep['errors'].append('engine probe: no circuits found')
 except Exception as e:
     rep['errors'].append('engine probe: %s' % str(e)[:140])
 

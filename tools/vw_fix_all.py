@@ -42,23 +42,38 @@ rep['circuits'] = len(circuits)
 
 vs.NameUndoEvent('ShowCAD: repair + far-end labels')
 
-# ── 1. engine check (cheap, tells us if any of this will render) ───────────
+# ── 1. engine check, WITHOUT creating anything ────────────────────────────
+# Earlier this probed CreateCustomObjectN('Angle', 5.0, 5.0, 0, False). That is
+# wrong twice over: the signature is (objectName, p, rotationAngle, showPref)
+# where p is a POINT TUPLE, so the extra argument shifted 5.0 into the angle
+# slot and VW reported "incorrect angle format". Creating a throwaway PIO in
+# the user's real drawing was also needless risk. Toggling a field on a circuit
+# that already exists answers the same question and touches nothing new.
 try:
-    try:
-        vs.CreateCustomObjectN('Angle', 5.0, 5.0, 0, False)
-    except TypeError:
-        vs.CreateCustomObjectN('Angle', (5.0, 5.0), 0, False)
-    probe = vs.LNewObj()
-    if probe:
-        bb = vs.GetBBox(probe)
-        flat = []
-        for part in bb:
-            flat.extend(part) if isinstance(part, (tuple, list)) else flat.append(part)
-        rep['probe_bbox'] = [round(float(v), 4) for v in flat]
-        rep['engine_runs'] = any(abs(float(v)) > 1e-9 for v in flat)
-        vs.DelObject(probe)
+    probe_h = circuits[0] if circuits else None
+    if probe_h is not None:
+        def _flat_bbox(h):
+            bb = vs.GetBBox(h)
+            out = []
+            for part in bb:
+                out.extend(part) if isinstance(part, (tuple, list)) else out.append(part)
+            return [round(float(v), 6) for v in out]
+
+        before_bb = _flat_bbox(probe_h)
+        keep = vs.GetRField(probe_h, 'Circuit', 'Number')
+        vs.SetRField(probe_h, 'Circuit', 'Number', 'ENGINEPROBE')
+        vs.ResetObject(probe_h)
+        after_bb = _flat_bbox(probe_h)
+        vs.SetRField(probe_h, 'Circuit', 'Number', keep)   # restore
+        vs.ResetObject(probe_h)
+        rep['probe_bbox_before'] = before_bb
+        rep['probe_bbox_after'] = after_bb
+        # A circuit that regenerates redraws its number text, changing the bbox.
+        rep['engine_runs'] = (before_bb != after_bb)
+    else:
+        rep['errors'].append('engine probe: no circuits found')
 except Exception as e:
-    rep['errors'].append('engine probe: %s' % str(e)[:120])
+    rep['errors'].append('engine probe: %s' % str(e)[:140])
 
 # ── 2. socket names: collapse double spaces (descend INTO device PIOs) ─────
 def walk_sockets(h, depth=0):
