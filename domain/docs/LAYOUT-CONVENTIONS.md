@@ -465,6 +465,10 @@ one sequence per signal prefix, numbered **per design layer** in stacking order,
 left-to-right then top-to-bottom. Keep `"Number Display"` **off** on the
 schematic (house style) but populate `Number` so the schedule has a key.
 
+On the worksheet path (§6.0) stacking order is set by the order of rows in the
+connection list, so sort it by `(src.col, src.row, src socket index)` and
+`Number Cables` produces house order for free.
+
 ### 4.4 Cable schedule
 
 Derive it as a worksheet report over the `Circuit` record — every column below is
@@ -576,13 +580,71 @@ sheet.
 ## 6. THE PLACEMENT SPEC (numeric, executable)
 
 All values in **mm**, on the A0 sheet, origin **bottom-left of the page**,
-**y grows up** (matching the MCP bridge's coordinate convention). All values are
-multiples of `G = 4 mm`. See §8 for the feet-inches variant.
+**y grows up** (matching the MCP bridge's coordinate convention). Every value is
+a multiple of the module `G = 4 mm`, which is ConnectCAD's own documented snap
+grid at 1:1 (§0). See §8 for the feet-inches variant.
+
+### 6.0 Express the layout as ORDINALS first, coordinates second
+
+Circuits cannot currently be bound from script: the bridge dispatches from a
+modal dialog callback, where Vectorworks does not run the parametric engine, so
+ConnectCAD's own bind never fires. The build therefore goes through ConnectCAD's
+supported bulk path — a BoM worksheet driving **Create Devices From BoM**, and a
+connection worksheet driving **Make Connections from List**. On that path
+**ConnectCAD may place the devices itself**, and our x/y never gets applied.
+
+So the spec below is written twice. The ordinals are the contract; the
+coordinates are the preferred realisation of it.
+
+Every device carries three ordinals:
+
+```python
+device.band  # 0=R reference/sync  1=V video spine  2=M monitoring/audio
+             # 3=N network/fibre   4=P power            -> vertical zone
+device.col   # 0..6, the signal stage                   -> left-to-right order
+device.row   # 0..n within (band, col)                  -> top-to-bottom order
+sort_key = (band, col, row)
+```
+
+**What we still control on the worksheet path, and how to use it:**
+
+| lever | how to set it | what it buys |
+|---|---|---|
+| BoM row order | sort BoM rows by `(band, col, row)` | auto-layout consumes rows in order, so devices come out **grouped by service and ordered by signal stage** even when the coordinates are not ours |
+| Connection-list row order | sort by `(src.col, src.row, src socket index)` | `Number Cables` then runs left-to-right, top-to-bottom — the house numbering order (§4.3) |
+| Layer snap grid | set once to **4 mm** at 1:1 | anything ConnectCAD auto-places lands on the same module as anything we place, so a later manual nudge stays aligned |
+| Device `width` / `height` | write them into the BoM (§2.1 formulae) | block proportions survive regardless of who positions the block |
+| Class assignment | `CC-Circuit-Signal-<SIG>` per circuit row | signal colour survives, which is how the drawing is read (§4.1) |
+| Terminal panels + `Panel.Way` strings | authored in the connection list | the cross-reference topology (§3) is data, not geometry — it cannot be destroyed by auto-layout |
+
+**The consequence to internalise:** everything in §3 (cross-references) and §4
+(signal/cable/numbering) is *data* and survives auto-layout intact. Only §6.3 /
+§6.4 (absolute x/y) is at risk. That is the right split — the anti-spaghetti
+mechanism is the cross-reference rule, not the coordinates.
+
+**Column ordinals are derived from the netlist, not chosen by hand.** Take
+`domain/devices/netlist.json`, build the directed graph over the 58 circuits,
+drop the edges the §3.3 rule marks as cross-references (they are not spine
+edges), and longest-path from the sources. That yields, for this rig:
+
+| col | stage | instances | why |
+|---|---|---|---|
+| 0 | off-sheet capture | `Main CTP` ways | DA inputs are off-sheet |
+| 1 | capture fan-out + feeders | `DA 1..3`, `MIF4 1..3`, `AVN-AIO8R` | `DA n -> SRV *`, `MIF4 n -> SRV *`, `AVN -> SRV *` |
+| 2 | **servers** | `SRV DIR`, `SRV ACT`, `SRV UND` | fed by col 1, feeds `RTR 1` |
+| 3 | **matrix (hub)** + monitoring | `RTR 1`, `MV 1` | `SRV * -> RTR 1`; `RTR 1 -> MV 1` |
+| 4 | processing + conversion | `SX40 1..3`, `HA5 1..3` | `RTR 1 -> SX40 n`, `RTR 1 -> HA5 1` |
+| 5 | distribution + fibre out | `XD 1..2`, `FIDO TX` | `SX40 n -> XD n`, `HA5 1 -> FIDO TX`, `MV 1 -> FIDO TX` |
+| 6 | off-sheet LED / FOH | `Main CTP` LED ways | leaves the sheet |
+
+Band 0 (R) holds `SPG 1`, `SR112`, `TR12D` and the `OGX` frames; band 3 (N)
+holds `SW01`, `SW02`. Both are reached by cross-reference from the spine, so
+their column ordinal only sets left-to-right order within their own band.
 
 ### 6.1 Constants
 
 ```python
-G            = 4.0     # grid unit == socket pitch == panel way pitch
+G            = 4.0     # module: socket pitch, panel way pitch, layer snap grid
 BLOCK_W      = {'narrow': 24.0, 'medium': 32.0, 'wide': 40.0}
 NAME_BAND_H  = 8.0     # above the block
 IP_STRIP     = (20.0, 4.0)   # w, h, inside top-left of the block
@@ -590,26 +652,31 @@ SOCKET_PITCH = 4.0
 TOP_PAD      = 8.0     # block top -> first socket centre
 BOT_PAD      = 4.0     # last socket centre -> block bottom
 HEIGHT       = lambda n_rows: 4.0 * n_rows + 8.0
+WIDTH        = lambda maxlen: 24.0 if maxlen <= 6 else 32.0 if maxlen <= 10 else 40.0
 
-GUTTER_MIN   = 72.0    # floor for any gutter that carries circuits
 GUTTER       = lambda n, xr: max(72.0, 4.0*n + (32.0 if xr else 0.0))  # see 6.2
-GUTTER_STUB  = 32.0    # columns that only receive panel stubs
+GUTTER_STUB  = 40.0    # columns that only receive panel stubs
 STAGGER_DX   = 44.0    # x offset of a staggered second card column
 STAGGER_DY   = 36.0    # y offset of a staggered second card column
-ROW_PITCH    = lambda h: max(60.0, h + 20.0)   # min 60; 20 mm clear between blocks
-ROW_CLEAR_MIN= 16.0    # absolute floor (measured RTR1.1 -> RTR1.2)
+ROW_GAP      = 20.0    # block bottom -> block top below it, in a column.
+                       # MEASURED BLOCK-TO-BLOCK, not to the name band: the
+                       # 8 mm name band of the lower block sits inside this gap,
+                       # so 20 leaves 12 mm of visible clear space.
+ROW_GAP_MIN  = 16.0    # absolute floor (measured RTR1.1 -> RTR1.2 = 16 raw,
+                       # i.e. 8 mm clear after that block's name band)
+COL_GAP_MIN  = 16.0    # min x clear between side-by-side blocks in a band
+BAND_GAP     = 10.0    # clear between bands
 
 PANEL_STUB   = 32.0    # device edge -> panel terminus
 PANEL_COL_W  = 32.0    # width reserved for a panel terminus column
-XREF_STUB    = 32.0    # device edge -> xref label; the label sits at the STUB
-                       # END, in the panel/xref column - never hard against the
-                       # block.  Widen to reach a shared xref column (see 3.2).
+XREF_STUB    = 32.0    # device edge -> xref label; label sits at the STUB END,
+                       # in the panel/xref column - never hard against the block
 
-TEXT_NAME    = 3.7     # device name
-TEXT_MODEL   = 2.2     # make_model
-TEXT_SOCKET  = 2.1     # socket name
+TEXT_NAME    = 3.7     # set these as CLASS TEXT STYLES (5.2), not per object
+TEXT_MODEL   = 2.2
+TEXT_SOCKET  = 2.1
 TEXT_CONN    = 1.8     # connector-on-cable + --> / <--
-TEXT_XREF    = 2.2     # Panel.Way cross-reference
+TEXT_XREF    = 2.2
 TEXT_IP      = 1.35
 
 MAX_LINE_SPAN = 250.0  # beyond this: cross-reference, not a line
@@ -619,213 +686,285 @@ MAX_LINE_SPAN = 250.0  # beyond this: cross-reference, not a line
 
 A gutter must hold one **4 mm vertical lane per circuit crossing it**, plus a
 **32 mm strip against the receiving block** when that block also carries
-cross-reference labels on that side — because the labels live at the *stub end*,
-not against the block (§3.2). The as-built proves the lane budget is the binding
+cross-reference labels on that side — the labels live at the *stub end*, not
+against the block (§3.2). The as-built proves the lane budget is the binding
 constraint: its widest gutter is the DA-bank → GX3 run at
-`1192.3 -> 1849.9 pt` = **232 mm**, carrying ~24 circuits (two GX3s x 12 SDI
-inputs). It is not 72 mm because it could not be.
+`1192.3 -> 1849.9 pt` = **232 mm**, carrying ~24 circuits. It is not 72 mm
+because it could not be.
 
-```python
-GUTTER = lambda n, has_xref: max(72.0, 4.0*n + (32.0 if has_xref else 0.0))
-```
+Counting the real `netlist.json` edges that survive the §3.3 rule as **drawn**
+lines:
 
-### 6.3 Column x-positions — and the one hard constraint
+| gutter | drawn circuits | xref strip | width |
+|---|---|---|---|
+| col 0 → col 1 | 3 (`Main CTP` → `DA n` inputs, stubs) | — | 72 |
+| col 1 → col 2 | **18** — `DA n -> SRV *` (9), `AVN -> SRV *` (6), `MIF4 n -> SRV *` (3) | yes | **104** |
+| col 2 → col 3 | 9 — `SRV * -> RTR 1` | yes | 72 |
+| col 3 → col 4 | 4 — `RTR 1 -> SX40 n` (3), `RTR 1 -> HA5 1` (1) | yes | 72 |
+| col 4 → col 5 | 3 — `SX40 n -> XD n` (2), `HA5 1 -> FIDO TX` (1) | yes | 72 |
+| col 5 → col 6 | 8 (`XD n` → LED ways, stubs) | — | 40 |
+| within col 3 | 4 — `RTR 1 -> MV 1`, vertical inside the column | — | — |
+| within band N | 2 — `SW01 -> SW02` SMF | — | 72 |
+| band R fan-down | 6 — `SPG 1 -> SRV *` (3), `SPG 1 -> SX40 n` (3) | — | vertical |
 
-Working the budget left to right for this rig:
+Everything else in the 58 is a cross-reference: `SRV * -> SW01` (3 LAN),
+`AVN -> SW01` and `TR12D -> SW01` (Dante), `MV 1 -> RTR 1` (2, right-to-left),
+`MV 1 -> FIDO TX` (1 — the straight corridor from col 3 to col 5 passes through
+`SX40 3`, so §3.3 rule 4 disqualifies it), and every `PWR`.
 
-| gutter | circuits drawn | xref strip | width | resulting column (left edge) |
-|---|---|---|---|---|
-| CTP terminus (x 56) → C1 | 12 | no | 72 | **C1 = 128** FiDO RX / capture (right 168) |
-| C1 → C2 | 12 | no | 72 | **C2 = 240** openGear card col A (right 280) |
-| C2 ↔ C3 | — | — | 44 (stagger, not a gutter) | **C3 = 284** card col B (right 324) |
-| C3 → C4 | **12** — see below | yes | 80 | **C4 = 404** SERVERS x3 (right 444) |
-| C4 → C5 | 24 (panel stubs only) | — | 32 | **C5 = 476** Internal Server Patch |
-| C5 → C6 | 24 | yes | 128 | **C6 = 644** *** MATRIX *** + VideoHub (right 684) |
-| C6 → C7 | 12 | yes | 80 | **C7 = 764** SX40 x3 (right 804) |
-| C7 → C8 | 12 | yes | 80 | **C8 = 884** Tessera XD (right 924) |
-| C8 → C9 | 8 (panel stubs only) | — | 40 | **C9 = 964** LED/FOH panel (terminus 996) |
-
-**Content width `24 .. 996` = 972 mm against 995 mm usable — fits, 23 mm spare.**
-
-The matrix lands at **C6 = 644**, the horizontal middle of the drawing area
-(20 .. 1015): four columns of sources to its left, three of sinks to its right.
-That is exactly what §1.2 requires of a hub.
-
-**The hard constraint, stated plainly.** The `C3 → C4` gutter decides whether
-this rig fits on one A0. Drawing **all** 12 DAs into **all three** servers is 36
-circuits → `4*36 + 32 = 176 mm`, which pushes C9's terminus to **1020 mm** and
-the sheet **does not fit**. So the budget above assumes **12 drawn circuits: the
-DA bank feeds `SRV01` with real lines, and its feeds to `SRV02` / `SRV03` go
-through `Main CTP` as cross-references.** That is not a fudge — it is the same
-decision the as-built makes everywhere else, and it is what keeps the dense
-gutter readable. If all 36 must be drawn, the answer is a two-sheet split
-(§6.6), not a smaller grid.
-
-### 6.4 Band y-ranges (block **bottom** edge lives inside these)
+### 6.3 Column x-positions
 
 ```
-R  reference / genlock / timecode      y 700 .. 800
-V  video spine                          y 300 .. 690
-M  monitoring + Dante audio + KVM       y 190 .. 290
-N  network + fibre trunks               y 100 .. 180
-P  power                                y  20 ..  90
+col 0    24    panel terminus  - Main CTP capture ways      (terminus line 56)
+                 g = 72
+col 1   128    DA 1..3 / MIF4 1..3 / AVN-AIO8R    (right 168)
+                 g = 104
+col 2   272    *** SERVERS ***  SRV DIR/ACT/UND   (right 312)
+                 g = 72
+col 3   384    *** MATRIX ***  RTR 1, + MV 1      (right 424)
+                 g = 72
+col 4   496    SX40 1..3, HA5 1..3                (right 536)
+                 g = 72
+col 5   608    XD 1..2, FIDO TX                   (right 648)
+                 g = 40
+col 6   688    panel terminus - LED / FOH ways     (terminus line 720)
 ```
 
-Minimum clear between bands: 10 mm. Nothing from one band is drawn through
-another; band-to-band always cross-references (§3.3).
+**Content width `24 .. 720` = 696 mm against 995 mm usable — 299 mm spare.**
+
+This is the headline change from my first pass. I had budgeted for a 12-card DA
+bank feeding three servers (36 circuits, a 176 mm gutter, a sheet that only just
+fitted). The settled rig has **3 DAs, not 12**, and the dense gutter carries
+**18 circuits, not 36**. The sheet is now comfortable, and the spare 299 mm is
+real headroom — spend it when the LED map lands and the `XD` count grows (it is
+a placeholder at 2 in the netlist).
+
+### 6.4 Band y-ranges
+
+```
+R  reference / genlock / timecode   y 700 .. 790   (max block 90 tall)
+V  video spine                      y 240 .. 690   (450 mm; servers need 436)
+M  monitoring + audio               folded into V's per-column slack (see below)
+N  network + fibre                  y  90 .. 230
+P  power                            y  15 ..  80
+```
+
+**Bands are not uniform stripes across the sheet — they are per-column vertical
+extents.** The as-built proves it: its DA column runs `y 316..676` while the
+switch column two gutters away runs `y 112..248`. Each column is packed
+independently, top-down, in band order, with `ROW_GAP = 20` between blocks. So
+"band M" is not a reserved stripe; the multiviewer simply occupies the slack
+below the matrix in col 3, and the audio I/O the slack below the DAs in col 1.
+
+The tallest column is col 2: `3 x 132 + 2 x 20 = 436 mm`, which is what sets
+band V's 450 mm.
 
 ### 6.5 Routing rules for the circuits that *are* drawn
 
-* Orthogonal only. Segments are horizontal or vertical; bends on the 4 mm grid.
+* Orthogonal only. Segments horizontal or vertical; bends on the 4 mm grid.
 * A circuit leaves an output socket horizontally right for at least `8 mm (2G)`,
   turns once vertically inside the gutter, and enters the input socket
   horizontally from the left for at least `8 mm`. The as-built's DA→GX3 routes
   use 17–36 vertices, so multi-bend is fine; keep the vertical leg inside a
   gutter, never over a block.
-* Allocate vertical "lanes" inside a gutter on a **4 mm** pitch, one per circuit;
-  the gutter was sized for exactly that count in §6.2. Assign lanes in destination
-  order (topmost destination gets the leftmost lane) so lines never cross inside
-  the gutter.
-* Never route through band `P` or band `N`.
+* Allocate vertical lanes inside a gutter on a **4 mm** pitch, one per circuit —
+  the gutter was sized for exactly that count in §6.2. Assign lanes in
+  destination order (topmost destination gets the leftmost lane) so lines never
+  cross inside the gutter.
+* Never route through band `N` or band `P`.
+* **The one sanctioned exception to left-to-right:** reference/genlock
+  distribution fans *downward* from band R and may run down-and-left. The
+  as-built does exactly this — `SPG1` sits at `x = 772.6` in band R and feeds the
+  GX3s at `x = 652`. It is legible because it is a single-source fan-out on its
+  own signal class and colour. Bound it: if a reference source must reach more
+  than **two** spine columns, cross-reference the further ones. `SPG 1` here
+  reaches col 2 and col 4 — exactly two — so all six drops are drawn.
 
 ### 6.6 Fit check and the sheet-break rule
 
-Content extent under this spec: `x 24 .. 996` (972 mm) by `y 20 .. 800`
-(780 mm), against a usable area of `995 x 810`. **It fits on one A0 at 1:1**,
-with 23 mm of horizontal and 30 mm of vertical margin, and with the as-built's
-own density as the precedent (that sheet carries 32 device blocks + 13 panel groups
-in `852 x 652 mm`).
+Content extent, verified by running every §7 coordinate through a pairwise
+overlap check (29 blocks including the 8 mm name band above each):
+`x 24 .. 720` (696 mm) by `y 15 .. 780` (765 mm), against a usable area of
+`995 x 810`. **Zero overlaps. One A0 at 1:1, with 299 mm horizontal and 45 mm
+vertical margin.** The as-built is the density precedent: 32 device blocks + 13
+panel groups in `852 x 652 mm`; ours is 26 instances in `696 x 765`.
 
-Break to a second sheet when **either** holds:
-* content would exceed `995 x 810 mm` — in practice the moment the `C3 → C4`
-  gutter must carry more than ~16 drawn circuits (§6.3), or
-* any single gutter would need to be wider than 232 mm (the as-built's own
+Vertical is now the tighter axis, and the driver is the **disguise server at 31
+socket rows = 132 mm**, three of them stacked. Break to a second sheet when
+**either** holds:
+
+* a single column would exceed **810 mm** — i.e. a fourth server in col 2
+  (`4 x 132 + 3 x 20 = 588`, still fine) is not the risk; a taller device is.
+  Recheck `HEIGHT()` against the library on every run rather than assuming.
+* any single gutter would need to be wider than **232 mm** (the as-built's own
   maximum, ~58 lanes) — past that a gutter stops reading as a gutter.
 
 **How to break:** split **by band**, never by column — cutting a column cuts the
-signal path. Sheet `S1` = bands R + V (the video spine). Sheet `S2` = bands
-M + N + P (monitoring, network, power). The two sheets join through the *same*
-terminal panels, since band-crossing edges are already cross-references (§3.3) —
-so no drawn circuit is ever severed by the split. Repeat the panel objects on
-both sheets; the `Panel.Way` string is the join, exactly as it is within a sheet.
+signal path. Sheet `S1` = bands R + V (the spine). Sheet `S2` = bands N + P
+(network, power). The two join through the *same* terminal panels, because
+band-crossing edges are already cross-references (§3.3), so **no drawn circuit is
+severed by the split.** Repeat the panel objects on both sheets; the `Panel.Way`
+string is the join, exactly as it is within a sheet.
 
 ---
 
 ## 7. Laying out THIS rig
 
-~25 devices: 3 servers, ~12 DAs, 2 routers (Lightware matrix + BMD VideoHub),
-2 switches, a multiviewer (openGear card), timecode/sync (Brainstorm SR-112),
-FiDO fibre TX/RX pairs, 3 Brompton Tessera SX40, Tessera XD, Dante I/O,
-patch panels, PDUs/UPS.
+Source: `domain/devices/library.json` (17 device types, 254 sockets) and
+`domain/devices/netlist.json` (26 instances, 58 circuits). Block sizes below are
+**computed** from the library with the §2.1 formulae — `rows` groups sockets by
+signal and takes `max(n_in, n_out) + n_io` per group, per §2.2.
 
-### Band R — reference, genlock, timecode (`y 700 .. 800`)
+| instance | type | sockets | rows | w x h | band | col | row |
+|---|---|---|---|---|---|---|---|
+| `SRV DIR` / `ACT` / `UND` | disguise GX3 | 35 | 31 | **40 x 132** | V | 2 | 0/1/2 |
+| `RTR 1` | Lightware MX2-16x16-HDMI20-R | 35 | 19 | **40 x 84** | V | 3 | 0 |
+| `SX40 1` / `2` / `3` | Brompton Tessera SX40 | 23 | 20 | 40 x 88 | V | 4 | 0/1/2 |
+| `MV 1` | Cobalt 9971-MV6-4H-4K | 22 | 14 | 40 x 64 | V | 3 | 1 |
+| `XD 1` / `2` | Brompton Tessera XD | 17 | 14 | 40 x 64 | V | 5 | 0/1 |
+| `SR112` | Brainstorm SR-112 | 17 | 16 | 32 x 72 | R | 3 | 0 |
+| `TR12D` | Glensound TR-12 (TR12D) | 15 | 14 | 32 x 64 | R | 4 | 0 |
+| `SW01` / `SW02` | Netgear M4350-24X4V | 30 | 30 | **32 x 128** | N | 1 | 0/1 |
+| `AVN-AIO8R` | Sonifex AVN-AIO8R | 18 | 10 | 32 x 48 | V | 1 | 6 |
+| `SPG 1` | Ross SPG8260-R2 | 10 | 9 | 32 x 44 | R | 2 | 0 |
+| `HA5 1` / `2` / `3` | AJA OG-HA5-12G | 5 | 5 | 40 x 28 | V | 4 | 3/4/5 |
+| `FIDO TX` | AJA FiDO-2T-12G | 5 | 5 | 40 x 28 | V | 5 | 2 |
+| `OGX 1..3` | Ross openGear Frame | 5 | 5 | 32 x 28 | R | 1 | 0/1/2 |
+| `DA 1` / `2` / `3` | Ross SRA-8901-4 | 5 | 4 | 40 x 24 | V | 1 | 0/1/2 |
+| `MIF4 1` / `2` / `3` | Rosendahl MIF 4 | 6 | 4 | 32 x 24 | V | 1 | 3/4/5 |
 
-| device | col | x | y | w x h | rows |
-|---|---|---|---|---|---|
-| `Main CTP` (REF ways) | C0 | 24 | 740 | panel | 4 ways |
-| `OGX1` openGear frame (REF1/2_IN, LAN) | C2 | 240 | 724 | 32 x 28 | 5 |
-| `SPG1` sync generator (openGear card) | C4 | 404 | 716 | 32 x 44 | 9 |
-| `TC01` Brainstorm SR-112 | C6 | 644 | 704 | 40 x 56 | 12 |
+The two blocks that set the sheet are the **disguise GX3 at 132 mm** (31 rows —
+taller than the as-built's 116, because this library carries more of its rear
+panel) and the **Netgear M4350-24X4V at 128 mm** (30 rows, 24 LAN + 4 SFP + 2
+PSU). Note `RTR 1` at 35 sockets is only **84 mm**, because 16 in and 16 out
+share rows (§2.2) — that is the single anatomy rule doing the most work here.
 
-`SPG1` fans out downward into band V — the one band-crossing that is drawn,
-because it is a single-column one-to-many. `TC01`'s LTC out to the servers is
-drawn; its house-clock in is `Main CTP.REF In`.
+### Column packing (x = block left edge, y = block bottom)
 
-### Band V — video spine (`y 300 .. 690`)
-
-| device | col | x | y (bottom) | w x h |
-|---|---|---|---|---|
-| `Main CTP` SDI In01..12 | C0 | 24 | 400 | panel, 12 ways = 48 mm |
-| `FIDO-RX01..04` (AJA) | C1 | 128 | 620 / 560 / 500 / 440 | 40 x 24 |
-| `DA01,03,05,07,09,11` | C2 | 240 | 650 / 590 / 530 / 470 / 410 / 350 | 40 x 24 |
-| `DA02,04,06,08,10,12` | C3 | 284 | 614 / 554 / 494 / 434 / 374 / 314 | 40 x 24 |
-| `SRV01` disguise | C4 | 404 | 572 | 40 x 116 (top 688) |
-| `SRV02` disguise | C4 | 404 | 436 | 40 x 116 (top 552, 20 mm clear) |
-| `SRV03` disguise | C4 | 404 | 300 | 40 x 116 (top 416, 20 mm clear) |
-| `Internal Server Patch 1..3` | C5 | 476 | 572 / 436 / 300 | panel, 12 ways |
-| **`RTR01` Lightware MX2-16x16** | **C6** | **644** | **520** | **40 x 84** |
-| `RTR02` BMD VideoHub 12G 10x10 | C6 | 644 | 420 | 40 x 64 |
-| `SX40-1` Brompton Tessera | C7 | 764 | 610 | 40 x 56 |
-| `SX40-2` Brompton Tessera | C7 | 764 | 534 | 40 x 56 |
-| `SX40-3` Brompton Tessera | C7 | 764 | 458 | 40 x 56 |
-| `XD01 / XD02` Tessera XD | C8 | 884 | 610 / 550 | 40 x 40 |
-| `Main CTP` LED Out / FOH ways | C9 | 964 | 440 | panel |
-
-DA row pitch 60 mm, columns staggered `+44 x / −36 y` — 12 cards in 44 mm of
-width. Server column: three 116 mm blocks need `3x116 + 2x20 = 388`, and band V
-is 390 mm — exact, with the 2 mm slack at the top. If a fourth server appears,
-drop `SRV03` into band M or split sheets (§6.6).
-
-### Band M — monitoring, Dante, KVM (`y 190 .. 290`)
-
-| device | col | x | y | w x h |
-|---|---|---|---|---|
-| `AVN-AIO8` Sonifex Dante | C1 | 128 | 200 | 40 x 56 |
-| `AVN-AIO4` Sonifex Dante | C2 | 240 | 200 | 40 x 40 |
-| `Audio Panel` | C0 | 24 | 210 | panel |
-| **`MV01` multiviewer (openGear card)** | **C6** | **644** | **200** | **40 x 88** |
-| `KVM1..3` Adder XDIP | C8 | 884 | 270 / 230 / 190 | 40 x 20 (40 mm pitch) |
-| `KVM Panel` | C9 | 964 | 200 | panel |
-
-**`MV01` sits directly below the matrix, in its own band.** Every one of its
-connections is a cross-reference — this is the whole point:
-* matrix out → MV in: `Main CTP.MV_IN01..16` printed at the MV's input side.
-* MV out → matrix in: `Main CTP.Matrix In09`, `Main CTP.Matrix In10` printed at
-  `x = 608` (on `RTR01`'s **input** side, one 32 mm stub out from the block edge).
-* Not one line runs right-to-left. Exactly as the as-built does it.
-
-### Band N — network and fibre (`y 100 .. 180`)
-
-| device | col | x | y | w x h |
-|---|---|---|---|---|
-| `SW01` Netgear M4350 | C2 | 240 | 120 | 24 x 56 |
-| `SW02` Netgear M4350 | C3 | 284 | 120 | 24 x 56 |
-| `FIDO-TX01`, `FIDO-TX03` → FOH | C4 | 404 | 160 / 120 | 40 x 24 |
-| `FIDO-TX02`, `FIDO-TX04` → FOH | C4+44 | 448 | 140 / 100 | 40 x 24 (staggered pair) |
-| `Network Panel` | C0 / C9 | 24 / 964 | 120 | panel |
-
-**FiDO TX → FOH and the switch fibre trunks leave the sheet.** They are
-cross-references at both ends and nothing is drawn:
-`Network Panel.Trunk01..04` for the inter-switch fibre,
-`Main CTP.FOH01..04` (or `Network Panel.FOH0n`) for the FiDO runs.
-The optic and connector go in the connector-on-cable field so they still print
-next to the socket: `1310nm`, `850nm`, `LCDUP`, `MTP-12` — same idiom the
-as-built uses for `Trunk01..04` and `100G A01/A02`, `100G B01/B02`.
-
-### Band P — power (`y 20 .. 90`)
-
-| device | col | x | y | w x h |
-|---|---|---|---|---|
-| `PDU1` Canford EMO E612 | C0 | 24 | 30 | 40 x 48 |
-| `PDU2` Canford MDU11 | C1 | 128 | 24 | 32 x 64 |
-| `UPS01` Riello SD3000 | C2 | 240 | 30 | 32 x 44 |
-
-Every device's `PWR_IN` cross-references here. Annotate each PDU way with the
-cable make-up in the way name, house style: `SRV01 (IEC to True1)`,
-`RTR01 (IEC to IEC)`, `SX40-1 (IEC to IEC)`, `SW01 (IEC to IEC)`.
-
-### Circuits actually drawn on this sheet
-
-Only these, and every one runs left-to-right within a band:
-
+**col 1, `x = 128`** — capture fan-out and feeders
 ```
-                                        span   circuits  gutter
-Main CTP SDI In  -> FIDO-RX             72 mm     12        72
-FIDO-RX          -> DA in               72 mm     12        72
-DA out           -> SRV01 in            80 mm     12        80   <- the dense one
-   DA -> SRV02 / SRV03 are Main CTP cross-references (see 6.3)
-SRV out          -> Internal Patch      32 mm     24        stub
-Internal Patch   -> RTR01 in           128 mm     24       128
-RTR01 out        -> SX40 in             80 mm     12        80
-SX40 out         -> XD                  80 mm     12        80
-XD out           -> Main CTP LED Out    40 mm      8        stub
-SPG1             -> genlock inputs      band R -> V, single-column fan-out
-PDU/UPS internal                        inside band P only
+DA 1        y 650  (40x24, top 674)
+DA 2        y 606  (top 630)
+DA 3        y 562  (top 586)
+MIF4 1      y 498  (32x24, top 522)
+MIF4 2      y 454
+MIF4 3      y 410
+AVN-AIO8R   y 330  (32x48, top 378)
+```
+Row gap 20 within a group, 32–40 between groups. Column extent `330 .. 674`.
+
+**col 2, `x = 272`** — servers, the tallest column
+```
+SRV DIR     y 544  (40x132, top 676)
+SRV ACT     y 392  (top 524)   -> 20 mm clear
+SRV UND     y 240  (top 372)   -> 20 mm clear
+```
+Extent `240 .. 676` = 436 mm. This is what band V's 450 mm is sized for.
+
+**col 3, `x = 384`** — the hub
+```
+RTR 1       y 592  (40x84, top 676)
+MV 1        y 508  (40x64, top 572)
+```
+`RTR 1 -> MV 1` (4x HDMI2.0) is a **vertical** run inside the column — no
+gutter needed. `MV 1 -> RTR 1` (2x) is the right-to-left return and is a
+cross-reference (below).
+
+**col 4, `x = 496`** — processing and conversion
+```
+SX40 1      y 588  (40x88, top 676)
+SX40 2      y 480  (top 568)
+SX40 3      y 372  (top 460)
+HA5 1       y 300  (40x28, top 328)   -> 44 mm clear below SX40 3
+```
+Extent `300 .. 676`. **`HA5 2` and `HA5 3` are not in this column** — they carry
+zero circuits in the netlist (only `HA5 1` is patched: `RTR 1 -> HA5 1 -> FIDO
+TX`). Draw them as unpatched spares in band N at `x 224 / 272, y 90`. Stacking
+all three under the SX40s does not fit: `3x88 + 2x20 + 32 + 3x28 + 2x20 = 460`
+against band V's 450.
+
+**col 5, `x = 608`** — distribution and fibre out
+```
+XD 1        y 612  (40x64, top 676)
+XD 2        y 528  (top 592)
+FIDO TX     y 300  (40x28, top 328)   -> level with HA5 1, which feeds it
+```
+The 200 mm gap between `XD 2` and `FIDO TX` is deliberate, not slack to be
+closed: it is where the additional XDs go when the LED map lands and the
+placeholder count of two grows (`netlist.json._open`).
+
+**band R, `y 700`** — reference, sync, timecode
+```
+OGX 1/2/3   x 128 / 176 / 224   (32x28)   frames only: REF1/2_IN, LAN, 2x PWR
+SPG 1       x 272               (32x44, top 744)
+SR112       x 384               (32x72, top 772)
+TR12D       x 496               (32x64, top 764)
 ```
 
-Everything else — MV returns, all `LAN`/`MGMT`, all `PWR_IN`, all Dante, all
-fibre trunks, all FOH — is a cross-reference. Longest drawn span: 128 mm, well
-inside the 250 mm ceiling and under half the as-built's 276 mm worst case.
+**band N, `y 90`** — network
+```
+SW01        x 128  (32x128, top 218)
+SW02        x 176  (32x128, top 218)
+HA5 2       x 224  (40x28,  top 118)   unpatched spare
+HA5 3       x 280  (40x28,  top 118)   unpatched spare
+```
+`SW01 -> SW02` (2x SMF) is a short horizontal run inside band N.
+
+**band P, `y 15`** — power. **Not yet specified.** No PDU or UPS appears in
+`library.json` or the 26 netlist instances, and the netlist carries no `PWR`
+circuits. Reserve `y 15 .. 80` and place `PDU1` / `PDU2` / `UPS01` at
+`x 24 / 72 / 120` once the power devices are added. Every device's `PWR_IN`
+cross-references here (§1.3), so nothing in the spine changes when they arrive.
+
+### The two right-to-left edges
+
+These are the only backward edges in the 58, and both are cross-references —
+exactly the mechanism §3.3 exists for:
+
+1. **`MV 1 -> RTR 1`, 2x HDMI2.0.** The multiviewer sits *below* the matrix in
+   col 3 and returns into it. Emit `Main CTP.Matrix In09` and
+   `Main CTP.Matrix In10` at the MV's outputs and again at `x = 348` on `RTR 1`'s
+   input side (one 32 mm stub out from the block edge at 384). Two real
+   `Circuit` objects per leg so the schedule stays complete. **No line is drawn.**
+   This is copied verbatim from the as-built, which resolves the identical
+   loop-back the identical way (measured at `x = 889.9` against `RTR 1.2` at
+   `x = 924.6`).
+2. **`FIDO TX` → FOH.** Leaves the sheet. `FIDO TX` is fed left-to-right by
+   `HA5 1` in the adjacent column (drawn) and by `MV 1` two columns back
+   (cross-referenced — the corridor is blocked by `SX40 3`). Its fibre pair out
+   becomes
+   `Main CTP.FOH01` / `.FOH02` with the optic and connector in the
+   connector-on-cable field (`1310nm`, `LCDUP`) so they still print at the
+   socket — the same idiom the as-built uses for `Trunk01..04` and
+   `100G A01/A02`. **Nothing is drawn.**
+
+### Everything else that is cross-referenced, not drawn
+
+`SRV DIR/ACT/UND -> SW01` (3x LAN), `AVN-AIO8R -> SW01` and `TR12D -> SW01`
+(Dante) — all band-crossing, all `Network Panel.<way>`. `MV 1 -> FIDO TX`, by
+the blocked-corridor rule. Every `PWR_IN`, once the power devices land.
+
+Longest **drawn** span: 104 mm (col 1 → col 2), well inside the 250 mm ceiling
+and under half the as-built's 276 mm worst case. **Drawn circuits: 46 of 58.
+Cross-referenced: 12.**
+
+### Two library defects the script must not silently draw
+
+* **`sw_m4250_40g8xf` (Netgear M4250-40G8XF-PoE++) has zero sockets.** The
+  library flags incompleteness rather than inventing ports — correct, and it must
+  not be papered over here. `HEIGHT(0)` returns an 8 mm block with no sockets,
+  which is a drafting bug, not a device. **Refuse to place any device with zero
+  sockets; emit it to the BoM with a `TBC` note and report it.** It is not among
+  the 26 netlist instances, so it does not affect this sheet.
+* **`xd` carries `qty: 0` in the library but two instances (`XD 1`, `XD 2`) in
+  the netlist**, and the netlist's own `_open` list says the XD count and the
+  SX40→LED fan-out are placeholders pending the LED map. Col 5 is sized for two;
+  the 299 mm of spare width (§6.3) is where more go.
+
+Also worth carrying forward from `netlist.json._open`: **every port number in
+the netlist is ours, not the user's** — paths are stated, socket assignments are
+assigned. Circuit endpoints will move when the user confirms; the ordinals in
+§6.0 will not, which is another reason to drive the drawing from them.
 
 ---
 
@@ -858,17 +997,18 @@ row pitch         max(1.875", h + 0.625")
 row clear min     0.5"
 panel stub        1.0"
 max line span     7.875"
-content extent    30.4" x 24.4"   on a 42 x 30" sheet -> 11.6" left for the
-                  title-block/legend strip, 5.6" of vertical margin.  Fits.
+content extent    21.7" x 23.9"   on a 42 x 30" sheet -> ample room for the
+                  title-block/legend strip and 5.5" of vertical margin.  Fits.
 ```
 
 **Text sizes do not scale with the grid** — keep the §2.3 absolute sizes, except
 the socket label, which drops from 2.1 mm to **1.8 mm (0.07", ~5 pt)** to hold
 the same 55–65 % fill of a 0.125" row.
 
-`G = 3/16"` was also evaluated (it is the nicer imperial grid): it gives a
-content extent of `45.6" x 36.6"`, which overruns ARCH E (36 x 48") vertically
-by 0.6" and needs a custom sheet. Not worth it — use 1/8".
+`G = 1/4"` is the *primary* imperial default in the ConnectCAD help table, but
+at this rig's size it gives a content extent of `43.5" x 48.9"` — taller than
+ARCH E is wide. The same table also sanctions **1/8" at 1:1**, which is what
+this rig needs. Use 1/8".
 
 Recommendation: **create the ConnectCAD schematic on its own design layer set to
 millimetres at 1:1**, independent of the Spotlight layer's imperial 1:48. VW
@@ -895,10 +1035,32 @@ MM = 25.4 / 72          # pt -> mm ; page is 3370x2384 pt == 1189x841 mm == A0
 
 ## 10. Open items
 
+**Resolved since the first pass:**
+
+* ~~Whether the 4 mm grid is ConnectCAD's default or an Adlib preference.~~
+  **It is ConnectCAD's own documented default snap grid at 1:1** — see the two
+  quotes in §0. Measuring the as-built and reading the manual agree.
+
+**Still open:**
+
 * The literal `CC-*` class list shipped in the ConnectCAD template is not
-  published in the online help; §5.2 gives the naming convention and the
-  signal-class family, but the script must **enumerate the document's classes at
-  startup** rather than assume. Confirm against a real ConnectCAD template file.
+  published in the online help. §5.2 has the naming convention verbatim and the
+  signal-class family; the script must still **enumerate the document's classes
+  at startup** rather than assume. Confirm against the metric ConnectCAD
+  template file itself.
 * `Circuit."Number Display"` — confirm the exact off value on a live document.
-* Whether the 4 mm grid is ConnectCAD's default (`Device.__gridScale`) or an
-  Adlib preference. Read `__gridScale` off a template device to settle it.
+* **Auto-layout behaviour is unverified.** §6.0 asserts that *Create Devices
+  From BoM* consumes rows in worksheet order. That is the load-bearing
+  assumption of the whole ordinal strategy and it has not been tested on a live
+  document. Test it early with a throwaway 4-device BoM before building the real
+  one — if it does not hold, the ordinals still order the *connection list* and
+  therefore the cable numbering, but grouping would have to be recovered by hand.
+* **Band P is unpopulated.** No PDU/UPS in `library.json`, no `PWR` circuits in
+  `netlist.json`. Coordinates reserved (§7), nothing to place yet.
+* **`sw_m4250_40g8xf` has zero sockets** — must be refused by the placement
+  script, not drawn as an 8 mm stub (§7).
+* **Every port number in `netlist.json` is ours, not the user's** (its own
+  `_open` says so). Endpoints will move on confirmation; the §6.0 ordinals will
+  not.
+* `XD` count and the SX40→LED fan-out are placeholders pending the LED map. Col
+  5 is sized for two, and §6.3 has 299 mm of spare width for more.

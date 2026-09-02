@@ -57,6 +57,33 @@ ALSO_IN_SHIPPED_DB = {
 }
 IN_DB = {}   # define everything ourselves - exactness beats reuse here
 
+
+# ── placement ordinals, per domain/docs/LAYOUT-CONVENTIONS.md §6.0 ──────────
+# ConnectCAD's auto-layout may override our absolute x/y, but it consumes the
+# BoM in ROW ORDER. So the ordinals - not the coordinates - are the contract:
+# sorting the BoM by (band, col, row) makes auto-layout group by service and
+# order by signal stage even if it discards our geometry entirely.
+# Bands: R reference/sync · V video spine · M monitoring/audio · N network · P power
+BAND_ORDER = {'R': 0, 'V': 1, 'M': 2, 'N': 3, 'P': 4}
+PLACEMENT = {
+    'SPG 1':   ('R', 0, 0),
+    'MIF4 1':  ('V', 1, 0), 'MIF4 2': ('V', 1, 1), 'MIF4 3': ('V', 1, 2),
+    'DA 1':    ('V', 1, 3), 'DA 2':   ('V', 1, 4), 'DA 3':   ('V', 1, 5),
+    'SRV DIR': ('V', 2, 0), 'SRV ACT': ('V', 2, 1), 'SRV UND': ('V', 2, 2),
+    'RTR 1':   ('V', 3, 0),
+    'SX40 1':  ('V', 4, 0), 'SX40 2': ('V', 4, 1), 'SX40 3': ('V', 4, 2),
+    'HA5 1':   ('V', 4, 3), 'HA5 2':  ('V', 4, 4), 'HA5 3':  ('V', 4, 5),
+    'XD 1':    ('V', 5, 0), 'XD 2':   ('V', 5, 1), 'FIDO TX': ('V', 5, 2),
+    'MV 1':    ('M', 3, 0),
+    'SR112':   ('M', 1, 0), 'TR12D': ('M', 1, 1), 'AVN-AIO8R': ('M', 1, 2),
+    'XDIP 1':  ('M', 2, 0),
+    'SW01':    ('N', 2, 0), 'SW02':  ('N', 2, 1),
+    'OGX 1':   ('R', 1, 0),
+}
+def sort_key(inst):
+    b, c, r = PLACEMENT.get(inst, ('V', 9, 99))
+    return (BAND_ORDER.get(b, 9), c, r, inst)
+
 lib = json.load(open(os.path.join(DEV, 'library.json')))
 DEVS = lib if isinstance(lib, list) else lib.get('devices', list(lib.values()))
 BYKEY = {d['key']: d for d in DEVS if isinstance(d, dict) and 'key' in d}
@@ -104,19 +131,24 @@ with open(out_db, 'w', encoding='utf-8-sig', newline='') as f:
     csv.writer(f, delimiter='\t', lineterminator='\r\n').writerows(rows)
 
 # ── 2. BoM worksheet -> Create Devices From BoM ─────────────────────────────
-bom = [['Name', 'Make', 'Model', 'Qty']]
-for inst, key in sorted(INSTANCES.items()):
+bom = [['Name', 'Make', 'Model', 'Qty', 'Band', 'Col', 'Row']]
+for inst, key in sorted(INSTANCES.items(), key=lambda kv: sort_key(kv[0])):
     dev = BYKEY.get(key, {})
     mk, mo = (IN_DB[key] if key in IN_DB
               else (dev.get('make', ''), dev.get('model', '')))
-    bom.append([inst, mk, mo, '1'])
+    b, c, r = PLACEMENT.get(inst, ('V', 9, 99))
+    bom.append([inst, mk, mo, '1', b, str(c), str(r)])
 with open(os.path.join(DEV, 'bom.tsv'), 'w', encoding='utf-8-sig', newline='') as f:
     csv.writer(f, delimiter='\t', lineterminator='\r\n').writerows(bom)
 
 # ── 3. Connection list -> Make Connections from List ────────────────────────
 con = [['Circuit', 'Src Device', 'Src Socket', 'Dst Device', 'Dst Socket',
         'Signal', 'Cable']]
-for c in net['circuits']:
+def circ_key(c):
+    b, col, row = PLACEMENT.get(c['src'][0], ('V', 9, 99))
+    return (BAND_ORDER.get(b, 9), col, row, c['n'])
+
+for c in sorted(net['circuits'], key=circ_key):
     con.append([str(c['n']), c['src'][0], c['src'][1], c['dst'][0], c['dst'][1],
                 SIG.get(c['signal'], c['signal']),
                 CON.get(c.get('cable', ''), c.get('cable', ''))])
