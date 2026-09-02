@@ -75,9 +75,9 @@ def set_vs(module):
 
 # ── namespace constants ─────────────────────────────────────────────────────
 # Plug-in-object names — the ForEachObject "PON='...'" criteria namespace.
-PON_DEVICE = 'Device'            # TBV
-PON_CIRCUIT = 'Circuit'          # TBV
-PON_SOCKET = 'Socket'            # TBV
+PON_DEVICE = 'Device'  # VERIFIED live VW 31.7.0 2026-09-01
+PON_CIRCUIT = 'Circuit'  # VERIFIED live VW 31.7.0 2026-09-01
+PON_SOCKET = 'Socket'  # VERIFIED live VW 31.7.0 2026-09-01
 PON_EQUIPMENT = 'Equipment Item'  # TBV
 PON_ADAPTER = 'Adapter'          # TBV
 
@@ -85,9 +85,9 @@ PON_ADAPTER = 'Adapter'          # TBV
 # For a PIO, the parametric record name is normally the same string as the PIO
 # name, but that is an assumption; cc_dump_records reports both so the two can
 # diverge without breaking anything.
-REC_DEVICE = 'Device'            # TBV
-REC_CIRCUIT = 'Circuit'          # TBV
-REC_SOCKET = 'Socket'            # TBV
+REC_DEVICE = 'Device'  # VERIFIED live VW 31.7.0 2026-09-01
+REC_CIRCUIT = 'Circuit'  # VERIFIED live VW 31.7.0 2026-09-01
+REC_SOCKET = 'Socket'  # VERIFIED live VW 31.7.0 2026-09-01
 REC_EQUIPMENT = 'Equipment Item'  # TBV
 REC_ADAPTER = 'Adapter'          # TBV
 
@@ -101,23 +101,23 @@ CC_TYPES = (
 )
 
 # Record field names. ALL TBV — corrected by cc_dump_records (T1.2).
-F_DEV_NAME = 'Name'              # TBV
-F_DEV_MAKE = 'Make'              # TBV
-F_DEV_MODEL = 'Model'            # TBV
-F_SKT_NAME = 'Name'              # TBV
-F_SKT_DIR = 'Direction'          # TBV
-F_CIR_NUMBER = 'Number'          # TBV
-F_CIR_SIGNAL = 'Signal'          # TBV
-F_CIR_CABLE = 'Cable Type'       # TBV
+F_DEV_NAME = 'name'  # VERIFIED live VW 31.7.0 2026-09-01
+F_DEV_MAKE = 'make'  # VERIFIED live VW 31.7.0 2026-09-01
+F_DEV_MODEL = 'model'  # VERIFIED live VW 31.7.0 2026-09-01
+F_SKT_NAME = 'name'  # VERIFIED live VW 31.7.0 2026-09-01
+F_SKT_DIR = 'type'  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_NUMBER = 'Number'  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_SIGNAL = 'Signal'  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_CABLE = 'Cable Type'  # VERIFIED live VW 31.7.0 2026-09-01
 
 # Circuit endpoint fields used ONLY by the record-join fallback (when the
 # CC_GetCircuit* getters are absent). Several plausible spellings are tried in
 # order and the first non-empty one wins; the winner is reported in
 # `_meta.join_fields` so the live run tells us the real names. ALL TBV.
-F_CIR_SRC_DEV = ('Source Device', 'From Device', 'Src Device')      # TBV
-F_CIR_SRC_SKT = ('Source Socket', 'From Socket', 'Src Socket')      # TBV
-F_CIR_DST_DEV = ('Destination Device', 'To Device', 'Dest Device')  # TBV
-F_CIR_DST_SKT = ('Destination Socket', 'To Socket', 'Dest Socket')  # TBV
+F_CIR_SRC_DEV = ('Src_Dev_Name',)  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_SRC_SKT = ('Src_Skt_Name',)  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_DST_DEV = ('Dst_Dev_Name',)  # VERIFIED live VW 31.7.0 2026-09-01
+F_CIR_DST_SKT = ('Dst_Skt_Name',)  # VERIFIED live VW 31.7.0 2026-09-01
 
 # vs.GetTypeN() index for a plug-in object (per commands.py OBJ_TYPES).
 TYPE_PLUGIN_OBJ = 68
