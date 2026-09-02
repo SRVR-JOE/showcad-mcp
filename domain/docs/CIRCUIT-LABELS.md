@@ -408,3 +408,112 @@ circuit ends say — only whether the connector text is among the things they sa
 3. Show the user. If they accept the look → bulk-apply. If they do not → Option B.
 4. Either way, set **Edit Default Circuit Graphics** at document level so the fix is
    inherited rather than stamped 220 times.
+
+---
+
+## 8. BUILT: `tools/vw_datatag_labels.py` (Option B, chosen)
+
+The user rejected converting circuits to `Circuit Type='arrow'`. Option B is now
+the deliverable. Script: `tools/vw_datatag_labels.py`. It runs as a **Resource
+Manager script resource (Python)**, not through the bridge — the bridge's modal
+dialog is why the parametric engine does not run, and it crashed VW twice.
+
+### Mechanism
+
+Two Data Tags per circuit, associated to the circuit, positioned at its two
+ends, each reading the FAR end out of the circuit's own record:
+
+| tag sits at | class | style | reads | for `OG DA - 01 -> DIR.SDI_IN 01` |
+|---|---|---|---|---|
+| source end | `SHOWCAD-EndLabel-AtSource` | `ShowCAD Far End At Source` | `Circuit.Dst_Skt_Name` | `SDI_IN 01` |
+| dest end | `SHOWCAD-EndLabel-AtDest` | `ShowCAD Far End At Dest` | `Circuit.Src_Dev_Name` | `OG DA - 01` |
+
+Circuit geometry is untouched — no `Circuit Type` change, no arrow stubs.
+Neither class is `CC-Circuit-Connector`; that class stays hidden.
+
+### The text is LIVE, not static
+
+Nothing is stamped. The tag reads the record field at draw time, and
+`cCADCircuitObj_EventSink::Recalculate()` rewrites `Src_*`/`Dst_*` on every
+recalculation via `UpdateSourceSocketDetails()` @ `0xe14e8` and
+`UpdateDestinationSocketDetails()` @ `0xe1508` **[BIN]**. Repatch a circuit and
+the record changes; the tag follows. `DT_ResetAllDataTags()` is called once at
+the end of a placement pass and is the documented recovery if any tag renders
+stale.
+
+### Why the tag styles are hand-made, not scripted
+
+A Data Tag's text comes from a *layout symbol* whose text object carries a
+"Use dynamic text" flag plus a serialized field definition
+(`DataTag::Interfaces::CDataTagText::SetIsCalculatedField`,
+`DataTag::Formula::CFormulaParserHelper::GetRecordType`). That serialization is
+undocumented and untestable from here, so fabricating it in script would be
+exactly the plausible-but-wrong output to avoid. Instead the user builds the two
+styles once through the documented **Define Tag Field** dialog
+(Advanced calculated field → Data Source: Record Format → Format Name:
+`Circuit` → Field Name → *Add to Definition*), and the script only places,
+styles, associates and verifies instances. The script **refuses to run** and
+prints the click-path if the styles are absent.
+
+### Association safety
+
+`DT_AssociateWithObj` returns BOOLEAN and is asserted on. Where the unindexed
+`DT_IsValid` is present it is used as a second, independent check
+(`getattr`-guarded — it is in `vs_index_drift.json → live_only`). A tag that
+fails either check is **deleted**, not left behind: an orphaned tag renders
+plausibly while bound to the wrong object, which is the hazard
+`SPOTLIGHT-DESIGN.md` documents. The report separates `tags_created` from
+`tags_verified` and never claims a bind it cannot prove.
+
+### API used — all checked against `vs_index.json` and `vs_index_drift.json`
+
+Indexed and not in the dead list: `CreateCustomObjectN`, `SetPluginStyle`,
+`IsNewCustomObject`, `DT_AssociateWithObj`, `DT_BeginMultipleMove`,
+`DT_EndMultipleMove`, `DT_ResetAllDataTags`, `SetClass`, `NameClass`,
+`ShowClass`, `ActiveClass`, `GetParametricRecord`, `GetName`, `GetRField`,
+`ForEachObject`, `FInGroup`, `NextObj`, `HCenter`, `GetBBox`, `GetTypeN`,
+`GetLayer`, `GetLName`, `Layer`, `ActLayer`, `DelObject`, `ResetObject`,
+`NameUndoEvent`, `AlrtDialog`, `Message`, `ClrMessage`,
+`SetVPClassVisibility`. `getattr`-guarded because unindexed-but-live:
+`DT_IsValid`.
+
+### Untested — read this before running
+
+Nothing below was executed; Vectorworks was closed after the crash.
+
+1. **Anchor positions.** The primary anchor walks the Circuit PIO for
+   `CC-Circuit-Connector` sub-objects and takes the first two. It is guarded:
+   any point falling outside the circuit's own world bbox is rejected (that is
+   the symptom of reading the PIO's **local** frame, the hazard
+   `CONNECT-MECHANISM.md` records for Device children) and the run falls back to
+   bbox-plus-`Orientation`. The DRY_RUN report prints the
+   `anchor_methods` histogram so you can see which path actually fired **before
+   writing anything**.
+2. **`SetPluginStyle` on a freshly created Data Tag.** Signature is indexed;
+   behaviour on this PIO is assumed.
+3. **`DT_IsValid` arity.** Probed, and a raise is treated as "unknown", not as
+   a failed association.
+4. **`ForEachObject "(ALL)"` reach.** Does not visit hidden or greyed layers.
+   If `circuits_found` is not 220, that is why.
+5. **Viewport class visibility.** Off by default (`SET_VIEWPORT_CLASS_VIS`).
+   Reported, not changed.
+
+### Five-minute verification
+
+1. Build the two tag styles (TAG STYLE SETUP block at the top of the script).
+2. Paste the script into a Resource Manager Python script resource. Run it
+   as-is — `DRY_RUN = True`. Nothing is written.
+3. Open `~/showcad_datatag_report.json`. Check `circuits_found == 220`,
+   `tags_planned == 440`, `errors == 0`, and read `anchor_methods`. If it says
+   `connector_loci=220` the geometry path works; if it says `bbox_orient_L=218`
+   the fallback is carrying it and the tags will sit at the bbox edges, which
+   may still be fine.
+4. Set `DRY_RUN = False`, run. Check `tags_verified == tags_created` and
+   `tags_rolled_back == 0`.
+5. Zoom to one known circuit. Confirm the destination end reads the source
+   device and the source end reads the destination socket. Then **Cmd-Z** and
+   confirm they all vanish — that proves the whole pass is one undo step before
+   you commit to it. Redo, then save.
+
+Reversal at any later point: `REMOVE_ALL = True`, `DRY_RUN = False`. It deletes
+only Data Tags on the two `SHOWCAD-EndLabel-*` classes.
