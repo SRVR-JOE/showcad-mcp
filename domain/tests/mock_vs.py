@@ -132,8 +132,8 @@ _BY_UUID = {}
 
 
 def _dev(name, make, model, layer, sockets):
-    d = H(_record="Device", Name=name, Make=make, Model=model, _layer=layer)
-    d["_sockets"] = [H(_record="Socket", Name=n, Direction=dr, _parent=d)
+    d = H(_record="Device", name=name, make=make, model=model, _layer=layer)
+    d["_sockets"] = [H(_record="Socket", name=n, type=dr, _parent=d)
                      for n, dr in sockets]
     return d
 
@@ -151,25 +151,22 @@ DEVICES = [
     _dev("SRV 1", "disguise", "GX3", "VIDEO SCHEM",
          [("DP OUT 1", "out"), ("DP OUT 2", "out")]),  # DP OUT 2 unconnected on purpose
 ]
-_D = {d["Name"]: d for d in DEVICES}
+_D = {d["name"]: d for d in DEVICES}
 
 
 def _skt(dev, name):
-    return next(s for s in _D[dev]["_sockets"] if s["Name"] == name)
+    return next(s for s in _D[dev]["_sockets"] if s["name"] == name)
 
 
-# Every plausible spelling a fallback implementation might guess for the
-# circuit endpoint fields. ALL of them are TBV. The mock populates all aliases
-# with the same value so the fallback path can be exercised regardless of which
-# name the ConnectCAD agent picked — tests never assert WHICH name is right.
-SRC_DEV_ALIASES = ("Source Device", "SourceDevice", "Src Device",
-                   "From Device", "Source", "From")
-SRC_SKT_ALIASES = ("Source Socket", "SourceSocket", "Src Socket",
-                   "From Socket", "Source Connector", "Source Jack")
-DST_DEV_ALIASES = ("Destination Device", "Dest Device", "DestDevice",
-                   "To Device", "Destination", "To")
-DST_SKT_ALIASES = ("Destination Socket", "Dest Socket", "DestSocket",
-                   "To Socket", "Destination Connector", "Destination Jack")
+# The circuit endpoint field names are no longer guesses. A live dump against
+# Vectorworks 31.7.0 (domain/docs/records/connectcad-records-VW2026.md) settled
+# them: the Circuit record denormalises BOTH endpoints under these exact names.
+# The mock deliberately populates ONLY these — populating speculative aliases as
+# well would let a handler reading the wrong field still pass.
+SRC_DEV_ALIASES = ("Src_Dev_Name",)
+SRC_SKT_ALIASES = ("Src_Skt_Name",)
+DST_DEV_ALIASES = ("Dst_Dev_Name",)
+DST_SKT_ALIASES = ("Dst_Skt_Name",)
 
 
 def _cir(num, sig, ct, sd, ss, dd, ds):
