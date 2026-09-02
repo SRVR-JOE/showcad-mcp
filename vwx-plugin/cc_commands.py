@@ -78,6 +78,15 @@ def set_vs(module):
 PON_DEVICE = 'Device'  # VERIFIED live VW 31.7.0 2026-09-01
 PON_CIRCUIT = 'Circuit'  # VERIFIED live VW 31.7.0 2026-09-01
 PON_SOCKET = 'Socket'  # VERIFIED live VW 31.7.0 2026-09-01
+# ConnectCAD represents an off-sheet / external endpoint as its OWN plug-in
+# type, not as a Device. Verified on a real 48-device drawing: its record has
+# the same fields as Device PLUS `extname` and `type`, and `name` is always
+# the literal '<EXT>' - the human label lives in `extname` ('RACK MON 1').
+# Collecting only PON='Device' made every circuit landing on an external read
+# as a dangling end: 99 externals produced exactly 99 false dangling reports.
+PON_EXTERNAL = 'Device-External'  # VERIFIED live VW 31.7.0 2026-09-02
+REC_EXTERNAL = 'Device-External'  # VERIFIED live VW 31.7.0 2026-09-02
+F_EXT_NAME = 'extname'            # VERIFIED live VW 31.7.0 2026-09-02
 PON_EQUIPMENT = 'Equipment Item'  # TBV
 PON_ADAPTER = 'Adapter'          # TBV
 
@@ -439,12 +448,27 @@ def _socket_row(s):
     }
 
 
+def _device_name(h):
+    """Display name, resolving externals.
+
+    A Device-External always carries name='<EXT>'; its real label is `extname`.
+    Falling back to `extname` keeps 99 externals from all sharing one name.
+    """
+    nm = _rf(h, REC_DEVICE, F_DEV_NAME)
+    if nm in ('<EXT>', '', None):
+        ext = _rf(h, REC_EXTERNAL, F_EXT_NAME)
+        if ext:
+            return ext
+    return nm
+
+
 def _device_summary(h, with_sockets=True):
     row = {
         'object_id': _oid(h),
-        'name': _rf(h, REC_DEVICE, F_DEV_NAME),    # TBV
-        'make': _rf(h, REC_DEVICE, F_DEV_MAKE),    # TBV
-        'model': _rf(h, REC_DEVICE, F_DEV_MODEL),  # TBV
+        'name': _device_name(h),
+        'is_external': _pio_name(h) == PON_EXTERNAL,
+        'make': _rf(h, REC_DEVICE, F_DEV_MAKE),
+        'model': _rf(h, REC_DEVICE, F_DEV_MODEL),
         'layer': _s(_safe(lambda: vs.GetLName(vs.GetLayer(h)))),
     }
     if with_sockets:
@@ -456,7 +480,7 @@ def _device_summary(h, with_sockets=True):
 
 # ── circuit edges: the two-world core ───────────────────────────────────────
 def _endpoint_names(dev_h, skt_h):
-    return (_rf(dev_h, REC_DEVICE, F_DEV_NAME),
+    return (_device_name(dev_h) if dev_h else None,
             _rf(skt_h, REC_SOCKET, F_SKT_NAME))
 
 
@@ -877,6 +901,9 @@ def cc_list_devices(p):
     limit = int(p.get('limit') or MAX_OBJECTS)
     with_sockets = p.get('with_sockets', True)
     handles, mode = _collect(PON_DEVICE, limit)
+    if p.get('include_external', True):
+        ext, _m = _collect(PON_EXTERNAL, limit)
+        handles = list(handles) + list(ext)
     rows = [_device_summary(h, with_sockets) for h in handles]
     if p.get('layer'):
         rows = [r for r in rows if r['layer'] == p['layer']]
@@ -1004,6 +1031,12 @@ def cc_audit_unconnected(p):
         connected.add((c['dst_device'], c['dst_socket']))
 
     handles, dmode = _collect(PON_DEVICE, int(p.get('limit') or MAX_OBJECTS))
+    # Externals are real endpoints, not missing ones. Including them here is
+    # what stops a circuit landing on an off-sheet reference being reported as
+    # dangling - the bug that turned 99 externals into 99 false positives.
+    if p.get('include_external', True):
+        _ext, _ = _collect(PON_EXTERNAL, int(p.get('limit') or MAX_OBJECTS))
+        handles = list(handles) + list(_ext)
     devices = 0
     for h in handles:
         ds = _device_summary(h)

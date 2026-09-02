@@ -4417,7 +4417,7 @@ import importlib as _importlib
 import sys as _sys
 
 _DOMAIN_ERRORS = {}
-for _mod in ('cc_commands', 'sl_commands'):
+for _mod in ('cc_commands', 'sl_commands', 'cc_build'):
     try:
         if _mod in _sys.modules:
             _importlib.reload(_sys.modules[_mod])
@@ -4433,11 +4433,13 @@ if 'cc_commands' not in _DOMAIN_ERRORS:
     from cc_commands import *       # noqa: F401,F403
 if 'sl_commands' not in _DOMAIN_ERRORS:
     from sl_commands import *       # noqa: F401,F403
+if 'cc_build' not in _DOMAIN_ERRORS:
+    from cc_build import *          # noqa: F401,F403
 
 
 def domain_status(p):
     """Which domain modules loaded, and why one did not. No params."""
     return {'status': 'ok',
-            'loaded': [m for m in ('cc_commands', 'sl_commands')
+            'loaded': [m for m in ('cc_commands', 'sl_commands', 'cc_build')
                        if m not in _DOMAIN_ERRORS],
             'errors': _DOMAIN_ERRORS}
