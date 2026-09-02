@@ -1,0 +1,254 @@
+﻿Brompton	Tessera SX40	482.6	44.45	300		0	FALSE	1						HDMI	1	L	HDMI2.0_IN	HDMI	IN		Video	Other	
+														BNC	1	L	12G-SDI_IN	12GV	IN				
+														BNC	1	R	12G-SDI_THRU	12GV	OUT				
+														BNC	1	L	REF_IN	REF	IN				
+														BNC	1	R	REF_THRU	REF	OUT				
+														RJ45	1	R	10G_OUT 1 Cu	LAN	OUT				
+														RJ45	1	R	10G_OUT 2 Cu	LAN	OUT				
+														RJ45	1	R	10G_OUT 3 Cu	LAN	OUT				
+														RJ45	1	R	10G_OUT 4 Cu	LAN	OUT				
+														LCDUP	1	R	10G_OUT 1 Fib	LAN	OUT				
+														LCDUP	1	R	10G_OUT 2 Fib	LAN	OUT				
+														LCDUP	1	R	10G_OUT 3 Fib	LAN	OUT				
+														LCDUP	1	R	10G_OUT 4 Fib	LAN	OUT				
+														RJ45	1	R	MGMT 1	LAN	IO				
+														RJ45	1	R	MGMT 2	LAN	IO				
+														XLR5F	1	L	DMX_IN	DMX	IN				
+														XLR5M	1	R	DMX_THRU	DMX	OUT				
+														DP	1	R	DP_OUT	DP	OUT				
+														USB-A	1	R	USB 1	USB	IO				
+														USB-A	1	R	USB 2	USB	IO				
+														USB-A	1	R	USBFront 1	USB	IO				
+														USB-A	1	R	USBFront 2	USB	IO				
+														C13	1	L	PWR_IN	PWR	IN				
+Brompton	Tessera XD	482.6	44.45	300		0	FALSE	1						RJ45	1	L	10G_IN Cu	LAN	IN		Video	Other	
+														LCDUP	1	L	10G_IN Fib	LAN	IN				
+														RJ45	1	R	10G_THRU Cu	LAN	OUT				
+														LCDUP	1	R	10G_THRU Fib	LAN	OUT				
+														RJ45	1	R	1G_OUT 1	LAN	OUT				
+														RJ45	1	R	1G_OUT 2	LAN	OUT				
+														RJ45	1	R	1G_OUT 3	LAN	OUT				
+														RJ45	1	R	1G_OUT 4	LAN	OUT				
+														RJ45	1	R	1G_OUT 5	LAN	OUT				
+														RJ45	1	R	1G_OUT 6	LAN	OUT				
+														RJ45	1	R	1G_OUT 7	LAN	OUT				
+														RJ45	1	R	1G_OUT 8	LAN	OUT				
+														RJ45	1	R	1G_OUT 9	LAN	OUT				
+														RJ45	1	R	1G_OUT 10	LAN	OUT				
+														RJ45	1	R	MGMT	LAN	IO				
+														pCON	1	L	PWR_IN	PWR	IN				
+														NAC3MX-W-TOP	1	R	PWR_THRU	PWR	OUT				
+disguise	GX3	482.6	44.45	300		0	FALSE	1						HDMI	1	R	VFC Slot 1	HDMI	OUT		Video	Server	
+														HDMI	1	R	VFC Slot 2	HDMI	OUT				
+														HDMI	1	R	VFC Slot 3	HDMI	OUT				
+														DP	1	R	GUI_OUT	DP	OUT				
+														BNC	1	L	12G-SDI_IN A	12GV	IN				
+														BNC	1	L	3G-SDI_IN B	3GV	IN				
+														BNC	1	L	3G-SDI_IN C	3GV	IN				
+														BNC	1	L	3G-SDI_IN D	3GV	IN				
+														BNC	1	L	12G-SDI_IN E	12GV	IN				
+														BNC	1	L	3G-SDI_IN F	3GV	IN				
+														BNC	1	L	3G-SDI_IN G	3GV	IN				
+														BNC	1	L	3G-SDI_IN H	3GV	IN				
+														BNC	1	L	12G-SDI_IN I	12GV	IN				
+														BNC	1	L	3G-SDI_IN J	3GV	IN				
+														BNC	1	L	3G-SDI_IN K	3GV	IN				
+														BNC	1	L	3G-SDI_IN L	3GV	IN				
+														RJ45	1	R	MGMT	LAN	IO				
+														RJ45	1	R	LAN A	LAN	IO				
+														RJ45	1	R	LAN B	LAN	IO				
+														RJ45	1	R	LAN C	LAN	IO				
+														RJ45	1	R	LAN D	LAN	IO				
+														RJ45	1	R	LAN E	LAN	IO				
+														XLR3F	1	L	LINE_IN L	LINE	IN				
+														XLR3F	1	L	LINE_IN R	LINE	IN				
+														XLR3M	1	R	LINE_OUT L	LINE	OUT				
+														XLR3M	1	R	LINE_OUT R	LINE	OUT				
+														TOS	1	L	ADAT_IN	ADAT	IN				
+														TOS	1	R	ADAT_OUT	ADAT	OUT				
+														DIN5M	1	L	MIDI_IN	MIDI	IN				
+														DIN5M	1	R	MIDI_OUT	MIDI	OUT				
+														BNC	1	L	REF_IN	REF	IN				
+														USB-A	1	R	USB 1	USB	IO				
+														USB-A	1	R	USB 2	USB	IO				
+														USB-A	1	R	USB 3	USB	IO				
+														pCON	1	L	PWR_IN	PWR	IN				
+Lightware	MX2-16x16-HDMI20-R	482.6	44.45	300		0	FALSE	1						HDMI	1	L	HDMI_2.0 1	HDMI	IN		Video	Other	
+														HDMI	1	L	HDMI_2.0 2	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 3	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 4	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 5	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 6	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 7	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 8	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 9	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 10	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 11	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 12	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 13	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 14	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 15	HDMI	IN				
+														HDMI	1	L	HDMI_2.0 16	HDMI	IN				
+														HDMI	1	R	HDMI_2.0 1	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 2	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 3	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 4	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 5	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 6	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 7	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 8	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 9	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 10	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 11	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 12	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 13	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 14	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 15	HDMI	OUT				
+														HDMI	1	R	HDMI_2.0 16	HDMI	OUT				
+														RJ45	1	R	LAN	LAN	IO				
+														C13	1	L	PWR_IN 1	PWR	IN				
+														C13	1	L	PWR_IN 2	PWR	IN				
+Cobalt Digital	9971-MV6-4H-4K	482.6	44.45	300		0	FALSE	1						BNC	1	L	12G-SDI_IN 1	12GV	IN		Video	Multiviewer	
+														BNC	1	L	12G-SDI_IN 2	12GV	IN				
+														BNC	1	L	12G-SDI_IN 3	12GV	IN				
+														BNC	1	L	12G-SDI_IN 4	12GV	IN				
+														BNC	1	L	12G-SDI_IN 5	12GV	IN				
+														BNC	1	L	12G-SDI_IN 6	12GV	IN				
+														BNC	1	R	12G-SDI_OUT 1	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 2	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 3	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 4	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 5	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 6	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 7	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 8	12GV	OUT				
+														HDMI	1	L	HDMI2.0_IN 1	HDMI	IN				
+														HDMI	1	L	HDMI2.0_IN 2	HDMI	IN				
+														HDMI	1	L	HDMI2.0_IN 3	HDMI	IN				
+														HDMI	1	L	HDMI2.0_IN 4	HDMI	IN				
+														HDMI	1	R	HDMI2.0_OUT 1	HDMI	OUT				
+														HDMI	1	R	HDMI2.0_OUT 2	HDMI	OUT				
+														RJ45	1	R	LAN	LAN	IO				
+														HD15M	1	R	GPIO/COMM	GPI	IO				
+AJA	OG-HA5-12G	482.6	44.45	300		0	FALSE	1						HDMI	1	L	HDMI2.0_IN	HDMI	IN		Video	Converter	
+														BNC	1	R	12G-SDI_OUT 1	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 2	12GV	OUT				
+														RCA	1	L	LINE_IN L	LINE	IN				
+														RCA	1	L	LINE_IN R	LINE	IN				
+Ross Video	Opengear Frame	482.6	44.45	300		0	FALSE	1						BNC	1	L	REF1_IN	REF	IN		Video	Frame	
+														BNC	1	L	REF2_IN	REF	IN				
+														RJ45	1	R	LAN	LAN	IO				
+														C13	1	L	PWR_IN 1	PWR	IN				
+														C13	1	L	PWR_IN 2	PWR	IN				
+Ross Video	SRA-8901-4	482.6	44.45	300		0	FALSE	1						BNC	1	L	12G-SDI_IN	12GV	IN		Video	Distribution	
+														BNC	1	R	12G-SDI_OUT 1	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 2	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 3	12GV	OUT				
+														BNC	1	R	12G-SDI_OUT 4	12GV	OUT				
+Ross Video	SPG8260-R2	482.6	44.45	300		0	FALSE	1						BNC	1	L	REF_IN	REF	IN		Video	Sync Generator	
+														BNC	1	R	REF1_OUT A	REF	OUT				
+														BNC	1	R	REF1_OUT B	REF	OUT				
+														BNC	1	R	REF2_OUT A	REF	OUT				
+														BNC	1	R	REF2_OUT B	REF	OUT				
+														BNC	1	R	REF3_OUT A	REF	OUT				
+														BNC	1	R	REF3_OUT B	REF	OUT				
+														BNC	1	R	REF4_OUT A	REF	OUT				
+														BNC	1	R	REF4_OUT B	REF	OUT				
+														BNC	1	R	WC_OUT	REF	OUT				
+Brainstorm	SR-112	482.6	44.45	300		0	FALSE	1						XLR3F	1	L	LTC_IN	LTC	IN		Video	Other	
+														DB25M	1	R	LTC_OUT 1	LTC	OUT				
+														DB25M	1	R	LTC_OUT 2	LTC	OUT				
+														DB25M	1	R	LTC_OUT 3	LTC	OUT				
+														DB25M	1	R	LTC_OUT 4	LTC	OUT				
+														DB25M	1	R	LTC_OUT 5	LTC	OUT				
+														DB25M	1	R	LTC_OUT 6	LTC	OUT				
+														DB25M	1	R	LTC_OUT 7	LTC	OUT				
+														DB25M	1	R	LTC_OUT 8	LTC	OUT				
+														XLR3M	1	R	LTC_OUT 9	LTC	OUT				
+														XLR3M	1	R	LTC_OUT 10	LTC	OUT				
+														STJ	1	R	LTC_OUT 11	LTC	OUT				
+														STJ	1	R	LTC_OUT 12	LTC	OUT				
+														BNC	1	L	REF_IN	REF	IN				
+														RJ45	1	R	LAN	LAN	IO				
+														4PIN-DC	1	L	PWR_IN 1	PWR	IN				
+														4PIN-DC	1	L	PWR_IN 2	PWR	IN				
+Glensound	TR-12 (TR12D Dante option)	482.6	44.45	300		0	FALSE	1						XLR3F	1	L	LTC_IN	LTC	IN		Audio	Clock/Timecode	
+														XLR3M	1	R	LTC_OUT 1	LTC	OUT				
+														XLR3M	1	R	LTC_OUT 2	LTC	OUT				
+														XLR3M	1	R	LTC_OUT 3	LTC	OUT				
+														XLR3M	1	R	LTC_OUT 4	LTC	OUT				
+														DB25M	1	R	LTC_OUT 5	LTC	OUT				
+														DB25M	1	R	LTC_OUT 6	LTC	OUT				
+														DB25M	1	R	LTC_OUT 7	LTC	OUT				
+														DB25M	1	R	LTC_OUT 8	LTC	OUT				
+														DB25M	1	R	LTC_OUT 9	LTC	OUT				
+														DB25M	1	R	LTC_OUT 10	LTC	OUT				
+														DB25M	1	R	LTC_OUT 11	LTC	OUT				
+														DB25M	1	R	LTC_OUT 12	LTC	OUT				
+														RJ45	1	R	DANTE	DANTE	IO				
+														C13	1	L	PWR_IN	PWR	IN				
+Sonifex	AVN-AIO8R	482.6	44.45	300		0	FALSE	1						XLR3F	1	L	LINE_IN 1	LINE	IN		Audio	Interface	
+														XLR3F	1	L	LINE_IN 2	LINE	IN				
+														XLR3F	1	L	LINE_IN 3	LINE	IN				
+														XLR3F	1	L	LINE_IN 4	LINE	IN				
+														XLR3F	1	L	LINE_IN 5	LINE	IN				
+														XLR3F	1	L	LINE_IN 6	LINE	IN				
+														XLR3F	1	L	LINE_IN 7	LINE	IN				
+														XLR3F	1	L	LINE_IN 8	LINE	IN				
+														XLR3M	1	R	LINE_OUT 1	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 2	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 3	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 4	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 5	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 6	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 7	LINE	OUT				
+														XLR3M	1	R	LINE_OUT 8	LINE	OUT				
+														RJ45	1	R	DANTE PRI	DANTE	IO				
+														RJ45	1	R	DANTE SEC	DANTE	IO				
+Netgear	M4350-24X4V (XSM4328CV)	482.6	44.45	300		0	FALSE	1						RJ45	1	R	LAN 1	LAN	IO		Control	Network	
+														RJ45	1	R	LAN 2	LAN	IO				
+														RJ45	1	R	LAN 3	LAN	IO				
+														RJ45	1	R	LAN 4	LAN	IO				
+														RJ45	1	R	LAN 5	LAN	IO				
+														RJ45	1	R	LAN 6	LAN	IO				
+														RJ45	1	R	LAN 7	LAN	IO				
+														RJ45	1	R	LAN 8	LAN	IO				
+														RJ45	1	R	LAN 9	LAN	IO				
+														RJ45	1	R	LAN 10	LAN	IO				
+														RJ45	1	R	LAN 11	LAN	IO				
+														RJ45	1	R	LAN 12	LAN	IO				
+														RJ45	1	R	LAN 13	LAN	IO				
+														RJ45	1	R	LAN 14	LAN	IO				
+														RJ45	1	R	LAN 15	LAN	IO				
+														RJ45	1	R	LAN 16	LAN	IO				
+														RJ45	1	R	LAN 17	LAN	IO				
+														RJ45	1	R	LAN 18	LAN	IO				
+														RJ45	1	R	LAN 19	LAN	IO				
+														RJ45	1	R	LAN 20	LAN	IO				
+														RJ45	1	R	LAN 21	LAN	IO				
+														RJ45	1	R	LAN 22	LAN	IO				
+														RJ45	1	R	LAN 23	LAN	IO				
+														RJ45	1	R	LAN 24	LAN	IO				
+														LCDUP	1	R	SFP28 1	OPT	IO				
+														LCDUP	1	R	SFP28 2	OPT	IO				
+														LCDUP	1	R	SFP28 3	OPT	IO				
+														LCDUP	1	R	SFP28 4	OPT	IO				
+														C13	1	L	PWR_IN 1	PWR	IN				
+														C13	1	L	PWR_IN 2	PWR	IN				
+AJA	FiDO-2T-12G	482.6	44.45	300		0	FALSE	1						BNC	1	L	12G-SDI_IN 1	12GV	IN		Video	Converter	
+														BNC	1	L	12G-SDI_IN 2	12GV	IN				
+														LCDUP	1	R	FIBRE_OUT 1	OPT	OUT				
+														LCDUP	1	R	FIBRE_OUT 2	OPT	OUT				
+														PSU-DC	1	L	DC_IN	PWR	IN				
+Rosendahl	MIF 4	482.6	44.45	300		0	FALSE	1						XLR3F	1	L	LTC_IN	LTC	IN		Video	Other	
+														XLR3M	1	R	LTC_OUT	LTC	OUT				
+														DIN5M	1	L	MIDI_IN	MIDI	IN				
+														DIN5M	1	R	MIDI_OUT	MIDI	OUT				
+														BNC	1	L	SYNC_IN	REF	IN				
+														USB-B	1	R	USB2_IO	USB	IO				
+Adder	XDIP	482.6	44.45	300		0	FALSE	1						HDMI	1	L	HDMI1.4_IN	HDMI1.4	IN		Control	KVM	
+														HDMI	1	R	HDMI1.4_OUT	HDMI1.4	OUT				
+														USB-B	1	R	USB	USB	IO				
+														USB-A	1	R	USB_OUT 1	USB	OUT				
+														USB-A	1	R	USB_OUT 2	USB	OUT				
+														RJ45	1	R	LAN	LAN	IO				

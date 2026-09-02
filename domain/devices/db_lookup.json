@@ -1,0 +1,516 @@
+{
+  "AJA|FIDO-T": {
+    "header": [
+      "AJA",
+      "FIDO-T",
+      "117",
+      "21.6",
+      "43.5",
+      "0.3",
+      "2",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "BNC",
+      "1",
+      "L",
+      "HDV_IN",
+      "HDV",
+      "IN",
+      "",
+      "Video",
+      "Converter",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "L",
+        "name": "HDV_IN",
+        "signal": "HDV",
+        "dir": "IN"
+      },
+      {
+        "connector": "SC",
+        "qty": "1",
+        "side": "R",
+        "name": "OPT_OUT",
+        "signal": "OPT",
+        "dir": "OUT"
+      }
+    ]
+  },
+  "Brainstorm|SR-112": {
+    "header": [
+      "Brainstorm",
+      "SR-112",
+      "482.6",
+      "44.45",
+      "206.4",
+      "1",
+      "36",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "XLR3M",
+      "1",
+      "R",
+      "TC_IN",
+      "LTC",
+      "IN",
+      "",
+      "Audio",
+      "Clock/Timecode",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "XLR3M",
+        "qty": "1",
+        "side": "R",
+        "name": "TC_IN",
+        "signal": "LTC",
+        "dir": "IN"
+      },
+      {
+        "connector": "XLR3F",
+        "qty": "2",
+        "side": "R",
+        "name": "TC_OUT",
+        "signal": "LTC",
+        "dir": "OUT"
+      },
+      {
+        "connector": "---",
+        "qty": "2",
+        "side": "R",
+        "name": "LINE_OUT",
+        "signal": "LINE",
+        "dir": "OUT"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "1",
+        "side": "R",
+        "name": "LAN_IO",
+        "signal": "LAN",
+        "dir": "IO"
+      }
+    ]
+  },
+  "Brompton|SX40": {
+    "header": [
+      "Brompton",
+      "SX40",
+      "431.8",
+      "88.9",
+      "406.4",
+      "11.33",
+      "120",
+      "TRUE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "XLR5F",
+      "1",
+      "L",
+      "DMX_IN",
+      "DMX",
+      "IN",
+      "",
+      "Video",
+      "Video Wall Controller",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "XLR5F",
+        "qty": "1",
+        "side": "L",
+        "name": "DMX_IN",
+        "signal": "DMX",
+        "dir": "IN"
+      },
+      {
+        "connector": "XLR5M",
+        "qty": "1",
+        "side": "R",
+        "name": "DMX_OUT",
+        "signal": "DMX",
+        "dir": "OUT"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "4",
+        "side": "R",
+        "name": "10G_DATA_OUT",
+        "signal": "LAN",
+        "dir": "OUT"
+      },
+      {
+        "connector": "LCDUP",
+        "qty": "4",
+        "side": "R",
+        "name": "10G_DATA_OUT",
+        "signal": "OPT",
+        "dir": "OUT"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "2",
+        "side": "L",
+        "name": "LAN_IO",
+        "signal": "LAN",
+        "dir": "IO"
+      },
+      {
+        "connector": "DP",
+        "qty": "1",
+        "side": "R",
+        "name": "LOCAL_UI_DP_OUT",
+        "signal": "DP",
+        "dir": "OUT"
+      },
+      {
+        "connector": "USB-A",
+        "qty": "2",
+        "side": "L",
+        "name": "USB_IO",
+        "signal": "USB",
+        "dir": "IO"
+      },
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "L",
+        "name": "12G-SDI_IN",
+        "signal": "12GV",
+        "dir": "IN"
+      },
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "R",
+        "name": "12G-SDI_OUT",
+        "signal": "12GV",
+        "dir": "OUT"
+      },
+      {
+        "connector": "HDMI",
+        "qty": "1",
+        "side": "L",
+        "name": "HDMI 2.0_IN",
+        "signal": "HDMI",
+        "dir": "IN"
+      }
+    ]
+  },
+  "Brompton|XD": {
+    "header": [
+      "Brompton",
+      "XD",
+      "482.6",
+      "88.9",
+      "209.55",
+      "3.7",
+      "40",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "RJ45",
+      "10",
+      "R",
+      "1G-DATA",
+      "LAN",
+      "OUT",
+      "",
+      "Video",
+      "Distribution",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "RJ45",
+        "qty": "10",
+        "side": "R",
+        "name": "1G-DATA",
+        "signal": "LAN",
+        "dir": "OUT"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "2",
+        "side": "L",
+        "name": "XD_IN/THRU",
+        "signal": "LAN",
+        "dir": "IO"
+      },
+      {
+        "connector": "SC",
+        "qty": "2",
+        "side": "L",
+        "name": "OPT_XD IN/THRU",
+        "signal": "OPT",
+        "dir": "IO"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "1",
+        "side": "L",
+        "name": "MGMT",
+        "signal": "LAN",
+        "dir": "IO"
+      }
+    ]
+  },
+  "Lightware|MX2-16x16-HDMI20": {
+    "header": [
+      "Lightware",
+      "MX2-16x16-HDMI20",
+      "482.6",
+      "133.35",
+      "304.8",
+      "8.5",
+      "83",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "HDMI",
+      "16",
+      "L",
+      "HDMI_2.0",
+      "HDMI",
+      "IN",
+      "",
+      "Video",
+      "Switcher",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "HDMI",
+        "qty": "16",
+        "side": "L",
+        "name": "HDMI_2.0",
+        "signal": "HDMI",
+        "dir": "IN"
+      },
+      {
+        "connector": "HDMI",
+        "qty": "16",
+        "side": "R",
+        "name": "HDMI_2.0",
+        "signal": "HDMI",
+        "dir": "OUT"
+      }
+    ]
+  },
+  "Rosendahl|MIF 4 MIDI Timecode Interface": {
+    "header": [
+      "Rosendahl",
+      "MIF 4 MIDI Timecode Interface",
+      "168",
+      "44.45",
+      "110",
+      "0.6",
+      "0",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "XLR3M",
+      "1",
+      "L",
+      "LTC_IN",
+      "LTC",
+      "IN",
+      "",
+      "Control",
+      "Clock/Timecode",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "XLR3M",
+        "qty": "1",
+        "side": "L",
+        "name": "LTC_IN",
+        "signal": "LTC",
+        "dir": "IN"
+      },
+      {
+        "connector": "XLR3F",
+        "qty": "1",
+        "side": "R",
+        "name": "LTC_OUT",
+        "signal": "LTC",
+        "dir": "OUT"
+      },
+      {
+        "connector": "DIN5M",
+        "qty": "1",
+        "side": "L",
+        "name": "MIDI_IN",
+        "signal": "MIDI",
+        "dir": "IN"
+      },
+      {
+        "connector": "DIN5M",
+        "qty": "1",
+        "side": "R",
+        "name": "MIDI_OUT",
+        "signal": "MIDI",
+        "dir": "OUT"
+      },
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "L",
+        "name": "SYNC_IN",
+        "signal": "HDV",
+        "dir": "IN"
+      },
+      {
+        "connector": "USB-B",
+        "qty": "1",
+        "side": "L",
+        "name": "USB2_IO",
+        "signal": "USB",
+        "dir": "IO"
+      }
+    ]
+  },
+  "disguise|GX2": {
+    "header": [
+      "disguise",
+      "GX2",
+      "482.6",
+      "177.8",
+      "585",
+      "16.8",
+      "0",
+      "FALSE",
+      "1",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "DVI",
+      "4",
+      "R",
+      "DVI",
+      "DVI",
+      "OUT",
+      "",
+      "Video",
+      "Server",
+      ""
+    ],
+    "sockets": [
+      {
+        "connector": "DVI",
+        "qty": "4",
+        "side": "R",
+        "name": "DVI",
+        "signal": "DVI",
+        "dir": "OUT"
+      },
+      {
+        "connector": "DVI",
+        "qty": "4",
+        "side": "R",
+        "name": "DVI",
+        "signal": "DVI",
+        "dir": "OUT"
+      },
+      {
+        "connector": "BNC",
+        "qty": "4",
+        "side": "L",
+        "name": "SDI_IN",
+        "signal": "HDV",
+        "dir": "IN"
+      },
+      {
+        "connector": "DIN5M",
+        "qty": "2",
+        "side": "R",
+        "name": "MIDI",
+        "signal": "MIC",
+        "dir": "IO"
+      },
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "L",
+        "name": "GEN_IN",
+        "signal": "AES",
+        "dir": "IN"
+      },
+      {
+        "connector": "N_CON",
+        "qty": "1",
+        "side": "L",
+        "name": "IN",
+        "signal": "PWR",
+        "dir": "IN"
+      },
+      {
+        "connector": "XLR3M",
+        "qty": "2",
+        "side": "L",
+        "name": "LINE_IN",
+        "signal": "LINE",
+        "dir": "IN"
+      },
+      {
+        "connector": "RJ45",
+        "qty": "4",
+        "side": "L",
+        "name": "LAN",
+        "signal": "LAN",
+        "dir": "IO"
+      },
+      {
+        "connector": "XLR3F",
+        "qty": "2",
+        "side": "R",
+        "name": "LINE_OUT",
+        "signal": "LINE",
+        "dir": "OUT"
+      },
+      {
+        "connector": "BNC",
+        "qty": "1",
+        "side": "R",
+        "name": "GUI_DP",
+        "signal": "HDV",
+        "dir": "OUT"
+      }
+    ]
+  }
+}
