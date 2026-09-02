@@ -109,6 +109,10 @@ IDLE_CLOSE = float(os.environ.get('VWX_IDLE_CLOSE',
 _SKIP = frozenset({1, 2, 4, 5, 2255, 2256, 12255, 12256, 12001, 12002})
 _SETUP_IDS = frozenset({2255, 12255})
 _CANCEL_IDS = frozenset({2, 12002})
+# OK / Commit. Closing a modal VW dialog via CANCEL discards every change the
+# script made; closing via OK keeps them. The dialog previously had no OK
+# button at all, so there was no way to end the bridge without losing the work.
+_OK_IDS = frozenset({1, 12001})
 
 # Shared state
 _q      = queue.Queue()
@@ -342,9 +346,14 @@ def _cb(item, data):
         except Exception as e:
             _log(f"Timer register fail: {e}")
         return False
-    if item in _CANCEL_IDS:    # Stop / Cancel button
+    if item in _OK_IDS:        # Commit — end the bridge and KEEP the changes
         _run[0] = False
-        return True            # close dialog
+        _log('Commit pressed — closing dialog via OK, changes retained')
+        return True
+    if item in _CANCEL_IDS:    # Discard — Vectorworks rolls the changes back
+        _run[0] = False
+        _log('DISCARD pressed — dialog cancelled, script changes are rolled back')
+        return True
     if item not in _SKIP:      # timer event
         _pump()
         # Idle auto-close: the modal pump dialog locks the VW UI, so release
@@ -359,6 +368,10 @@ def _cb(item, data):
             except Exception:
                 pass
             _run[0] = False
+            # NOTE: returning True here closes the dialog the same way Cancel
+            # does, so an idle auto-close would DISCARD pending changes. It is
+            # off by default on macOS (VWX_IDLE_CLOSE=0); do not enable it
+            # until the close path is proven to commit rather than cancel.
             _log(f"idle {IDLE_CLOSE}s — closing pump dialog (VW UI released)")
             return True        # close dialog
     return False
@@ -386,10 +399,18 @@ def start():
     t.start()
     _log(f"Server thread started: alive={t.is_alive()} gen={_MY_GEN[:8]} v{BRIDGE_VERSION}")
 
-    dlg = vs.CreateLayout('VW MCP Bridge', False, '', 'Stop')
+    # CreateLayout(title, hasHelp, defaultButtonName, cancelButtonName).
+    # This used to pass '' for the OK button, so the ONLY way out of the
+    # dialog was CANCEL - and cancelling a modal Vectorworks dialog DISCARDS
+    # every change the script made. An entire session's work (12 device
+    # renames, 298 socket renames, circuit end labels) was thrown away on
+    # close, and it read as 'the parametric engine is not running'.
+    # 'Commit' is now the default/OK button: it ends the bridge and KEEPS the
+    # work. 'Discard' still cancels, for when that is genuinely wanted.
+    dlg = vs.CreateLayout('VW MCP Bridge', False, 'Commit', 'Discard')
     _dlg_id[0] = dlg
     vs.CreateStaticText(dlg, 4, f'Active v{BRIDGE_VERSION}  -  TCP :{ VW_PORT }', 38)
-    vs.CreateStaticText(dlg, 5, 'Claude Code has full VW access', 38)
+    vs.CreateStaticText(dlg, 5, 'Commit = end bridge and KEEP changes', 38)
     vs.SetFirstLayoutItem(dlg, 4)
     vs.SetBelowItem(dlg, 4, 5, 0, 0)
     _log(f"Layout created dlg={dlg}, calling RunLayoutDialog")
