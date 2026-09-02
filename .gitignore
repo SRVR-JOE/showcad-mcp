@@ -7,3 +7,7 @@ vwx-plugin/bridge.log
 
 # local render scratch (contains absolute source paths)
 render/
+
+# python venv
+.venv/
+__pycache__/
