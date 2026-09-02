@@ -1,0 +1,355 @@
+{
+  "_meta": {
+    "probe_version": 1,
+    "timestamp": "2026-09-01T23:51:40",
+    "read_only": true,
+    "listener_verified_as_vectorworks": true,
+    "ping": {
+      "status": "ok",
+      "message": "VW MCP Bridge running"
+    }
+  },
+  "document_info": {
+    "name": "AI TESTING .vwx",
+    "path": "/Users/Joseph.Bradley/Downloads/AI TESTING .vwx",
+    "vw_version": [
+      31,
+      7,
+      0,
+      1
+    ]
+  },
+  "layers": {
+    "document": {
+      "name": "AI TESTING .vwx",
+      "path": "/Users/Joseph.Bradley/Downloads/AI TESTING .vwx",
+      "version": [
+        31,
+        7,
+        0,
+        1
+      ]
+    },
+    "layer_count": 1,
+    "layers": [
+      {
+        "name": "Design Layer-1",
+        "object_count": 0,
+        "scale": 48.0,
+        "kind": "design",
+        "visible": true
+      }
+    ],
+    "_tripwires_fired": [],
+    "_mutators_resolved": []
+  },
+  "cc_surface": {
+    "vs_name_count": 3243,
+    "cc_names": [
+      "CC_CircuitFromShape",
+      "CC_DeviceFromShape",
+      "CC_GetCableTypeData",
+      "CC_GetCircuitDest",
+      "CC_GetCircuitSource",
+      "CC_GetConnectorData",
+      "CC_GetDevice",
+      "CC_GetEquipmentItem",
+      "CC_GetSignalData",
+      "CC_OnFindAndReplace",
+      "CC_ReloadData",
+      "CC_RoomFromShape",
+      "CC_RouteFromShape"
+    ],
+    "cc_count": 13,
+    "expected_present": {
+      "CC_GetCircuitSource": true,
+      "CC_GetCircuitDest": true,
+      "CC_GetDevice": true,
+      "CC_GetEquipmentItem": true,
+      "CC_GetSignalData": true,
+      "CC_GetCableTypeData": true,
+      "CC_GetConnectorData": true,
+      "CC_DeviceSockets": false
+    },
+    "cc_detail": {
+      "CC_CircuitFromShape": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_DeviceFromShape": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetCableTypeData": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetCircuitDest": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetCircuitSource": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetConnectorData": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetDevice": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetEquipmentItem": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_GetSignalData": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_OnFindAndReplace": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_ReloadData": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_RoomFromShape": {
+        "callable": true,
+        "doc": ""
+      },
+      "CC_RouteFromShape": {
+        "callable": true,
+        "doc": ""
+      }
+    },
+    "other_names_matching_cc_keywords": [
+      "GetNetAdapterInfo"
+    ],
+    "_tripwires_fired": [],
+    "_mutators_resolved": []
+  },
+  "vs_index_cc_getcircuitsource": {
+    "error": "no vs function named 'CC_GetCircuitSource'"
+  },
+  "cc_capabilities": {
+    "status": "ok",
+    "capabilities": {
+      "CC_CircuitFromShape": true,
+      "CC_DeviceFromShape": true,
+      "CC_RouteFromShape": true,
+      "CC_RoomFromShape": true,
+      "CC_OnFindAndReplace": true,
+      "CC_ReloadData": true,
+      "CC_GetCircuitSource": true,
+      "CC_GetCircuitDest": true,
+      "CC_GetDevice": true,
+      "CC_GetEquipmentItem": true,
+      "CC_GetSignalData": true,
+      "CC_GetCableTypeData": true,
+      "CC_GetConnectorData": true,
+      "CC_DeviceSockets": false
+    },
+    "getters_present": [
+      "CC_GetCircuitSource",
+      "CC_GetCircuitDest",
+      "CC_GetDevice",
+      "CC_GetEquipmentItem",
+      "CC_GetSignalData",
+      "CC_GetCableTypeData",
+      "CC_GetConnectorData"
+    ],
+    "edge_mode": "cc_api",
+    "verdict": "RESEARCH.md §2 confirmed; vs_index.json is stale",
+    "_source": "bridge_verb"
+  },
+  "cc_dump_records": {
+    "status": "ok",
+    "document": {
+      "file": "AI TESTING .vwx",
+      "vw_version": [
+        31,
+        7,
+        0,
+        1,
+        879357
+      ]
+    },
+    "capabilities": {
+      "CC_CircuitFromShape": true,
+      "CC_DeviceFromShape": true,
+      "CC_RouteFromShape": true,
+      "CC_RoomFromShape": true,
+      "CC_OnFindAndReplace": true,
+      "CC_ReloadData": true,
+      "CC_GetCircuitSource": true,
+      "CC_GetCircuitDest": true,
+      "CC_GetDevice": true,
+      "CC_GetEquipmentItem": true,
+      "CC_GetSignalData": true,
+      "CC_GetCableTypeData": true,
+      "CC_GetConnectorData": true,
+      "CC_DeviceSockets": false
+    },
+    "objects_walked": 0,
+    "walk_sources": [],
+    "criteria_seeds": {},
+    "record_formats": [],
+    "record_format_count": 0,
+    "record_format_samples": {},
+    "pio_census": [],
+    "connectcad_types": {
+      "Device": {
+        "pon_constant": "Device",
+        "rec_constant": "Device",
+        "found": false,
+        "count": 0,
+        "samples": [],
+        "near_matches": [],
+        "note": "PON constant did not match any plug-in-object name in this document — correct PON_* above.",
+        "rec_constant_found": false
+      },
+      "Circuit": {
+        "pon_constant": "Circuit",
+        "rec_constant": "Circuit",
+        "found": false,
+        "count": 0,
+        "samples": [],
+        "near_matches": [],
+        "note": "PON constant did not match any plug-in-object name in this document — correct PON_* above.",
+        "rec_constant_found": false
+      },
+      "Socket": {
+        "pon_constant": "Socket",
+        "rec_constant": "Socket",
+        "found": false,
+        "count": 0,
+        "samples": [],
+        "near_matches": [],
+        "note": "PON constant did not match any plug-in-object name in this document — correct PON_* above.",
+        "rec_constant_found": false
+      },
+      "Equipment Item": {
+        "pon_constant": "Equipment Item",
+        "rec_constant": "Equipment Item",
+        "found": false,
+        "count": 0,
+        "samples": [],
+        "near_matches": [],
+        "note": "PON constant did not match any plug-in-object name in this document — correct PON_* above.",
+        "rec_constant_found": false
+      },
+      "Adapter": {
+        "pon_constant": "Adapter",
+        "rec_constant": "Adapter",
+        "found": false,
+        "count": 0,
+        "samples": [],
+        "near_matches": [],
+        "note": "PON constant did not match any plug-in-object name in this document — correct PON_* above.",
+        "rec_constant_found": false
+      }
+    },
+    "notes": [
+      "vs.GetParametricRecord returned nothing for any object — plug-in-object names could not be discovered, so the PON_* namespace cannot be verified from this run",
+      "PIO names not found: Device, Circuit, Socket, Equipment Item, Adapter — see near_matches"
+    ],
+    "_meta": {
+      "read_only": true,
+      "task": "T1.2"
+    },
+    "_source": "bridge_verb"
+  },
+  "sl_dump_records": {
+    "status": "ok",
+    "scope": "spotlight-only (ConnectCAD formats are cc_dump_records)",
+    "document": {
+      "name": "AI TESTING .vwx",
+      "path": "/Users/Joseph.Bradley/Downloads/AI TESTING .vwx",
+      "vw_version": [
+        31,
+        7,
+        0,
+        1
+      ]
+    },
+    "notes": [
+      "Document walk returned ZERO objects from every root (layer walk, FObject, criteria). Either the document is empty or every enumeration root is unavailable on this build — check _meta.vs_probe before believing any other field here.",
+      "No Spotlight record format matched. Either the document has no Spotlight content, or the format names differ from every TBV candidate — check all_format_names for the real spellings.",
+      "PIO criteria: commands.py uses BOTH 'T=PLUGINOBJ' (line 2212) and 'T=PLUGINOBJECT' (line 4290). pio_criteria_probe gives the row count for each; the census itself comes from the walk and does not depend on either being right. Standardise on whichever is non-zero.",
+      "type_n above is expected to be 86 for EVERY row: 86 is Plug-in Object, not \"Data Tag\" and not \"space\". RESEARCH.md §3 / TASKS.md T1.3 (\"Data Tag = type 86\") and commands.py OBJ_TYPES[86]=\"space\" are both wrong. Identify a PIO family by parametric_record, never by type_n.",
+      "No Spotlight PIO found to sample. pio_census lists what the document actually contains.",
+      "No Lighting Device sampled, so the universal-name probe did not run. Open a document with at least one fixture."
+    ],
+    "walk": {
+      "roots": {
+        "layer_walk": 0,
+        "FObject": 0,
+        "criteria:T=PLUGINOBJ": 0,
+        "criteria:T=PLUGINOBJECT": 0
+      },
+      "limit": 20000,
+      "truncated": false,
+      "total": 0
+    },
+    "format_count": 0,
+    "format_sources": {
+      "criteria:T=RECDEF": 0,
+      "attached_record": 0,
+      "parametric_record": 0
+    },
+    "all_format_names": [],
+    "record_formats": {},
+    "record_formats_matched": [],
+    "pio_criteria_probe": [
+      {
+        "criteria": "T=PLUGINOBJ",
+        "count": 0
+      },
+      {
+        "criteria": "T=PLUGINOBJECT",
+        "count": 0
+      }
+    ],
+    "pio_criteria_used": null,
+    "pio_census": [],
+    "samples": {},
+    "universal_names": null,
+    "vision_mapping": [
+      "Color",
+      "Universe",
+      "Template",
+      "Channel",
+      "Dimmer",
+      "FixtureID"
+    ],
+    "vision_mapping_note": "GetVisionMapping() returns the Lighting Device field names mapped to a visualizer, in SetVisionMapping order: color, universe, gobo, name, channel, fixtureid. Independent confirmation of the Universe and Channel field spellings if it is non-empty.",
+    "_meta": {
+      "vs_probe": {
+        "FInLayer": "ok",
+        "FLayer": "ok",
+        "FObject": "ok",
+        "ForEachObject": "blank",
+        "GetFName": "ok",
+        "GetFPathName": "ok",
+        "GetVersion": "ok",
+        "GetVisionMapping": "ok",
+        "NextLayer": "ok"
+      },
+      "walk": {
+        "roots": {
+          "layer_walk": 0,
+          "FObject": 0,
+          "criteria:T=PLUGINOBJ": 0,
+          "criteria:T=PLUGINOBJECT": 0
+        },
+        "limit": 20000,
+        "truncated": false,
+        "total": 0
+      }
+    },
+    "_source": "bridge_verb"
+  }
+}
