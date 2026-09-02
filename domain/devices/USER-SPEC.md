@@ -9,6 +9,9 @@ be marked as such wherever it is used.
 
 > "SX4O PLUGS INTO LIGHTWARE OUTPUTS PLEASE"
 
+> "DISGUISE SERVERS PLUG INTO MATRIX VIA HDMI. THE MV IS A OG ONE ANS IT
+>  PLUGS INTO MATRIX INS AND OUTS TOO"
+
 > "DO YOUR BEST WE WILL HONE IN."
 
 ## Settled
@@ -22,10 +25,20 @@ be marked as such wherever it is used.
 | Switch interconnect | Fiber trunks |
 | FOH feed | AJA **FiDO TX** |
 | Timecode / sync | Brainstorm **SR-112** |
+| Servers | **disguise** — feed the matrix over **HDMI** (pull sheet: 3 × VFCHDMI20 per server = 3 × HDMI 2.0 out each) |
+| Multiviewer | an **openGear** card (pull sheet `9971MV64K`, Cobalt 9971-MV family, in a Ross OGX frame) — **not** the as-built's Craltech |
+| MV wiring | Bidirectional with the matrix: takes matrix **outputs**, returns to matrix **inputs** |
 
 ## Signal spine
 
-    capture (3× 12G-SDI) → servers → Lightware MX2-16x16-HDMI20-R → 3× SX40 → LED
+    capture (3× 12G-SDI) → disguise servers ──HDMI──┐
+                                                    ▼
+                          openGear MV ⇄ Lightware MX2-16x16-HDMI20-R ──▶ 3× SX40 ──▶ LED
+
+The matrix is the HUB, not a stage in a line. Three claimants on its 16×16
+ports: disguise server HDMI outs (in), MV (both directions), SX40s (out).
+The MV return is a right-to-left edge — it must be drawn as a panel
+cross-reference, never as a line doubling back across the sheet.
 
 with reference/genlock, Dante/audio, network and power as separate bands.
 
@@ -36,9 +49,9 @@ with reference/genlock, Dante/audio, network and power as separate bands.
    carries a Sonifex AVN-AIO8 for Dante. Best reading: timecode/sync to the
    servers via SR-112, Dante arriving separately. Needs user confirmation —
    do not invent Dante ports on an SR-112.
-2. **Server model.** The user says "SERVERS" as distinct from the SX40s but
-   never names them. Both the pull sheet and the as-built are disguise GX3.
-   Carried as an assumption, not a fact.
+2. ~~Server model.~~ **RESOLVED** — the user confirmed disguise, feeding the
+   matrix over HDMI. Exact model (GX3 per pull sheet and as-built) still
+   assumed rather than stated.
 3. **Third SX40.** With 2 × 4K outputs and 3 processors, is the third a spare,
    a redundant pair member, or a third surface?
 4. **Lightware port budget.** How many matrix outputs each SX40 consumes.

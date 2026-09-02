@@ -1,0 +1,346 @@
+{
+  "_comment": "Connection list derived from the user's spec. TWO confidence axes, because they differ: 'path_confidence' is how sure we are that A connects to B at all; 'port_confidence' is how sure we are of the SPECIFIC socket numbers. The user stated the paths. Almost every port assignment is ours and needs review \u2014 it is the first thing to hone in on. Nothing is drawn until the connect mechanism is proven.",
+  "_open": [
+    "EVERY port/socket number below is assigned by us, not stated by the user. Paths are from the user; port assignments are a first pass.",
+    "Server COUNT: pull sheet has 2x D3GX3. User says 'SERVERS' without a number. Assuming 2 -> 6 HDMI into matrix.",
+    "Third SX40 role: spare, redundancy pair, or third surface?",
+    "SR-112 carries timecode/sync, not Dante. Dante assumed on the Sonifex AVN-AIO8 per pull sheet.",
+    "Matrix output count to each SX40 depends on surface mapping - 2x4K show across 3 processors."
+  ],
+  "circuits": [
+    {
+      "n": 1,
+      "src": [
+        "CAM/CAPTURE 1",
+        "12G-SDI OUT"
+      ],
+      "dst": [
+        "SRV 1",
+        "12G-SDI_IN A"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 2,
+      "src": [
+        "CAM/CAPTURE 2",
+        "12G-SDI OUT"
+      ],
+      "dst": [
+        "SRV 1",
+        "12G-SDI_IN E"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 3,
+      "src": [
+        "CAM/CAPTURE 3",
+        "12G-SDI OUT"
+      ],
+      "dst": [
+        "SRV 1",
+        "12G-SDI_IN I"
+      ],
+      "signal": "12G-SDI",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 10,
+      "src": [
+        "SRV 1",
+        "VFC Slot 1 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 1"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 11,
+      "src": [
+        "SRV 1",
+        "VFC Slot 2 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 2"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 12,
+      "src": [
+        "SRV 1",
+        "VFC Slot 3 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 3"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 13,
+      "src": [
+        "SRV 2",
+        "VFC Slot 1 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 4"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 14,
+      "src": [
+        "SRV 2",
+        "VFC Slot 2 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 5"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 15,
+      "src": [
+        "SRV 2",
+        "VFC Slot 3 HDMI"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 6"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 20,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 1"
+      ],
+      "dst": [
+        "SX40 1",
+        "HDMI IN"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 21,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 2"
+      ],
+      "dst": [
+        "SX40 2",
+        "HDMI IN"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 22,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 3"
+      ],
+      "dst": [
+        "SX40 3",
+        "HDMI IN"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 30,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 13"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI IN 1"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 31,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 14"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI IN 2"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 32,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 15"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI IN 3"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 33,
+      "src": [
+        "RTR 1",
+        "HDMI_2.0 OUT 16"
+      ],
+      "dst": [
+        "MV 1",
+        "HDMI IN 4"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 34,
+      "src": [
+        "MV 1",
+        "HDMI OUT 1"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 15"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "note": "MV return - RIGHT-TO-LEFT edge, draw as panel cross-reference",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 35,
+      "src": [
+        "MV 1",
+        "HDMI OUT 2"
+      ],
+      "dst": [
+        "RTR 1",
+        "HDMI_2.0 IN 16"
+      ],
+      "signal": "HDMI 2.0",
+      "cable": "HDMI",
+      "note": "MV return - cross-reference",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 40,
+      "src": [
+        "SR112",
+        "LTC OUT 1"
+      ],
+      "dst": [
+        "SRV 1",
+        "LTC IN"
+      ],
+      "signal": "LTC",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 41,
+      "src": [
+        "SR112",
+        "LTC OUT 2"
+      ],
+      "dst": [
+        "SRV 2",
+        "LTC IN"
+      ],
+      "signal": "LTC",
+      "cable": "BNC",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 50,
+      "src": [
+        "SW01",
+        "SFP+ 1"
+      ],
+      "dst": [
+        "SW02",
+        "SFP+ 1"
+      ],
+      "signal": "10GbE",
+      "cable": "FIBER",
+      "note": "switch trunk over fiber",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    },
+    {
+      "n": 60,
+      "src": [
+        "FIDO TX 1",
+        "FIBER OUT"
+      ],
+      "dst": [
+        "FOH PANEL",
+        "FIBER IN 1"
+      ],
+      "signal": "12G-SDI over fiber",
+      "cable": "FIBER",
+      "note": "FOH run - panel cross-reference",
+      "path_confidence": "stated",
+      "port_confidence": "assigned_by_us"
+    }
+  ]
+}
