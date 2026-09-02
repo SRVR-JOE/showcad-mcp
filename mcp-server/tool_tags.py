@@ -290,6 +290,27 @@ TOOL_TAGS = {
     "polygon_area_at_point": "query",
     "set_object_variable": "escape",
     "get_object_variable": "escape",
+    # showtech (entertainment domain: ConnectCAD + Spotlight)
+    # The read set from domain/docs/TASKS.md T2.3 (ConnectCAD) and T2.4
+    # (Spotlight). Names are listed here BEFORE the @vtool wrappers exist on
+    # purpose: vtool() looks the tag up by function name, and a tool whose name
+    # is missing from this map registers with NO tag at all — which makes it
+    # invisible under every preset (mcp.enable(tags=..., only=True) can only
+    # select tools that carry a tag), not just under 'showtech'. Missing entry =
+    # silently disappearing tool, so the map leads and the code follows.
+    # Phase 3 write verbs (cc_create_device, cc_connect, cc_from_data,
+    # sl_insert_fixture, sl_set_fields) and the Phase 4 cross-domain verbs
+    # (cc_cable_schedule, x_reconcile_schematic_vs_equipment, x_export_patch_csv)
+    # get their entries when they land — same tag.
+    "cc_list_devices": "showtech",       # T2.3
+    "cc_get_device": "showtech",         # T2.3 — incl. sockets
+    "cc_list_circuits": "showtech",      # T2.3
+    "cc_trace_signal": "showtech",       # T2.3 — source->dest walk across adapters
+    "cc_audit_unconnected": "showtech",  # T2.3
+    "sl_list_fixtures": "showtech",      # T2.4 — filterable by position/universe
+    "sl_get_fixture": "showtech",        # T2.4
+    "sl_patch_report": "showtech",       # T2.4 — channel/address/universe/position
+    "sl_positions": "showtech",          # T2.4 — hanging positions
 }
 
 # workflow presets -> set of tags to enable (only=True). "full" = no filtering.
@@ -307,6 +328,38 @@ PRESETS = {
     "baumkataster": {"landscape", "records", "query", "layers", "document",
                      "io", "escape"},
     "minimal": {"document", "query", "escape"},
+    # showtech — entertainment: a ConnectCAD schematic and a Spotlight patch in
+    # the same document. Every tag below earns its place; the reasoning is kept
+    # here because "it might be handy" is how a preset grows back into 'full'.
+    #   showtech   the cc_*/sl_* verbs themselves.
+    #   escape     MANDATORY per the note above — and doubly so here: until each
+    #              domain verb has its own @vtool wrapper it is reachable ONLY
+    #              through `vwx`/`list_commands`, both of which live in 'escape'.
+    #   records    the domain IS record access. ConnectCAD Device/Circuit/Socket
+    #              and Spotlight "Lighting Device" are PIO record formats read
+    #              and written with GetRField/SetRField; get_record_formats /
+    #              get_object_records are how an agent learns the real field
+    #              names instead of guessing them (TASKS T1.1-T1.3).
+    #   query      enumeration is by criteria ("PON='Lighting Device'"), not by
+    #              per-object loops: criteria_count, select_by_criteria,
+    #              for_each_criteria, get_object_info. Without it the agent can
+    #              find fixtures but cannot count, select or verify them.
+    #   document   ping + get_document_info + get_document_units + save_document.
+    #              The write guardrail is "document saved first", and the VW
+    #              version handshake decides whether the 2025+ CC_* getters
+    #              exist at all — both are document-tag calls.
+    #   layers     positions and schematic pages are layers. cc_list_devices
+    #              filters by layer, sl_positions reports them, and inserting
+    #              onto the right sheet needs get_layers/set_active_layer.
+    #   symbols    weakest of the six, included deliberately: fixtures are
+    #              inserted BY SYMBOL NAME (T3.4) and a ConnectCAD device
+    #              definition attaches to a Spotlight 3D symbol, so get_symbols
+    #              is how the exact resource name is found. Six tools, and the
+    #              alternative is a preset switch mid-task.
+    # Deliberately OUT: 'worksheets' (28 tools). The cable schedule and patch
+    # CSV exports (T4.2) will want it — add it then, not now.
+    "showtech": {"showtech", "records", "query", "symbols", "document",
+                 "layers", "escape"},
 }
 
 

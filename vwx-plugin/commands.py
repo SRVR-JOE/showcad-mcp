@@ -4401,3 +4401,43 @@ def set_object_style(p):
     if not h: return {'error': 'Object not found'}
     r = vs.SetPluginStyle(h, p.get('style', ''))
     return {'status': 'ok', 'result': str(r), 'style_now': _safe(lambda: vs.GetPluginStyle(h), '')}
+
+
+# ── Entertainment domain (ConnectCAD / Spotlight) ────────────────────────────
+# The verbs live in their own modules so the domain agents never collide in
+# this file. They are re-exported HERE because the pump and the TCP bridge both
+# resolve a verb with getattr(commands, name): a function that is not an
+# attribute of this module is not reachable.
+#
+# The reload is not optional. importlib.reload(commands) re-runs these import
+# lines, but `import cc_commands` then hits sys.modules and hands back the
+# CACHED module — so without it, an edit to cc_commands.py stays invisible no
+# matter how many times commands.py reloads.
+import importlib as _importlib
+import sys as _sys
+
+_DOMAIN_ERRORS = {}
+for _mod in ('cc_commands', 'sl_commands'):
+    try:
+        if _mod in _sys.modules:
+            _importlib.reload(_sys.modules[_mod])
+        else:
+            _importlib.import_module(_mod)
+    except Exception as _e:
+        # One broken domain module must never take the other 320 verbs down
+        # with it — a bare star-import of a file with a syntax error makes the
+        # bridge answer "Unknown command" for EVERYTHING.
+        _DOMAIN_ERRORS[_mod] = '%s: %s' % (type(_e).__name__, _e)
+
+if 'cc_commands' not in _DOMAIN_ERRORS:
+    from cc_commands import *       # noqa: F401,F403
+if 'sl_commands' not in _DOMAIN_ERRORS:
+    from sl_commands import *       # noqa: F401,F403
+
+
+def domain_status(p):
+    """Which domain modules loaded, and why one did not. No params."""
+    return {'status': 'ok',
+            'loaded': [m for m in ('cc_commands', 'sl_commands')
+                       if m not in _DOMAIN_ERRORS],
+            'errors': _DOMAIN_ERRORS}
