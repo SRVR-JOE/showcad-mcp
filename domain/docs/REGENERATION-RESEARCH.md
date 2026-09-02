@@ -42,6 +42,20 @@ Josh Benghiat, on the official board, says the same thing in one sentence:
 > completes.**"
 > — JBenghiat, [Reset Object & Active Layer](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/), 2021
 
+Vectorworks' own engineers say it twice more. Vladislav Stanev, in the official
+Progress Dialog sample, budgets for it explicitly — the last 10% of his progress bar is
+reserved for the reset sweep:
+
+> `{ do not close the progress }`
+> `{ this will make VW use the progress for finish up work }`
+> `{ so, 10% of the work will be VW finishing execution of the script,`
+> `  which normally is the time to reset parametric objects }`
+> — [Progress Dialog.md](https://github.com/Vectorworks/developer-scripting/blob/main/Common/Tasks/Dialogs/Progress%20Dialog.md)
+
+And `klinzey` (Vectorworks Inc.): *"There can only be one vectorscript running at a
+time so the doors will not regenerate and update till your script is finished."*
+([topic 24445](https://forum.vectorworks.net/topic/24445-how-do-you-update-redraw-drawing-during-script-execution/))
+
 Every measurement in `CONNECT-MECHANISM.md` §3.3 and `MACOS-EXECUTOR.md` §2 —
 `GetBBox` before/after `ResetObject`, and `GetBBox` on a freshly
 `CreateCustomObjectN`'d PIO — was taken **inside the same script execution as the
@@ -52,11 +66,13 @@ engine is dead" from "the engine is working exactly as designed."
 Run the 12-line falsification script in §2.3 before doing any more engineering.
 
 **One thing that could still be genuinely broken**, and which this research does not
-settle: whether the `RunLayoutDialog` timer-callback context ever reaches "script
-fully completed" while the dialog is open. The Plug-in Manager Python **menu command**
-context definitely does. That is a reason to prefer the menu-command executor — but it
-is a *different* reason from the one `MACOS-EXECUTOR.md` §2 currently gives, and it is
-testable in five minutes.
+settle: whether the `RunLayoutDialog` timer-callback context ever reaches "script fully
+completed" while the dialog is open. The Plug-in Manager Python **menu command** context
+definitely does. That is a reason to prefer the menu-command executor — but it is a
+*different* reason from the one `MACOS-EXECUTOR.md` §2 currently gives, and it is
+testable in five minutes. See §2.5, which narrows it further: direct geometry drawn from
+a dialog callback *does* appear, so the callback is not inert — the open question is
+specifically the deferred reset sweep.
 
 ### Primary source note
 
@@ -490,7 +506,48 @@ send any object to any layer without making it active."
 Note: `forum.vectorworks.net` 403s direct fetches. It is readable through the text proxy
 `https://r.jina.ai/<forum-url>`, which is how the above was retrieved.
 
-### 2.5 What this hypothesis does *not* explain
+### 2.5 The dialog-callback context, narrowed
+
+Our bridge dispatches from a `RunLayoutDialog` timer callback, so "does the sweep run
+before `RunLayoutDialog` returns?" is the live question. The forum narrows it usefully
+without answering it.
+
+**Drawing from a dialog callback is not inert.** Josh Benghiat:
+
+> "Dialogs should draw the new objects before they are closed. **You may need to issue a
+> Redraw() or RedrawAll() to see the new objects.**"
+> — [topic 56611](https://forum.vectorworks.net/topic/56611-persistent-highlight-of-object-during-dialog/),
+> with the asker confirming *"During the dialog I'm using the Redraw() to regen the
+> objects and it works!"*
+
+> "All dialogs are modal and take focus… **You can have a dialog refresh the drawing
+> while it is open, though.**"
+> — [topic 54086](https://forum.vectorworks.net/topic/54086-dockable-dialogue-possible-instead-of-modal/)
+
+That matches exactly what we see: `Rect`, `SetRField`, `SetName`, `HDuplicate` — all
+direct data and geometry operations — work fine from the bridge. So the callback has
+real document access. What is unproven is whether the *deferred per-PIO-type reset
+sweep* is drained there, and **no public test of that exists.** A sweep of all 3,758
+thread titles in the VectorScript, Python Scripting and SDK forums turns up not one
+mention of `RegisterDialogForTimerEvents` or `DialogTimerEventMessageC` (13028) — nobody
+is dispatching work from a dialog timer, so nobody has hit this. We would be first, and
+§2.3's third arm is the experiment.
+
+Someone did ask the equivalent question for the plain menu-command case, and got no
+answer:
+
+> "Apparently the code of the PO is only runned after completion of the code of the
+> procedure (a command plug in). Is there a way to force the code of the PO to run
+> before completion of the command?"
+> — Koos van de Linde, [topic 12885](https://forum.vectorworks.net/topic/12885-how-to-redraw-a-plugin-object-immediately/)
+
+Hard constraints on that context, all from practitioners, worth knowing before building
+on it: non-modal dialogs are impossible in Vectorworks (JBenghiat); the `Message()`
+floating palette is unavailable while a dialog is up (Sam Jones), so no progress
+reporting from a callback; nested dialogs stack strictly; and the callback fires on
+*every keystroke*, so anything needed across passes must persist outside it.
+
+### 2.6 What this hypothesis does *not* explain
 
 `CONNECT-MECHANISM.md` §3.2 records one cross-execution retest: geometry placed on the
 socket, `CC_CircuitFromShape`, then re-checked "in a separate script execution after
@@ -540,7 +597,38 @@ So "`SetRField` + `ResetObject` from a menu command" is a **documented, first-cl
 supported** equivalent of a user typing in the OIP. There is no privileged path we are
 missing.
 
-Two caveats worth carrying:
+**Charles Chandler — the author of the `ResetObject` documentation text — states the
+relationship precisely**, and it both confirms our approach and destroys one of our
+"verifications":
+
+> "If you change parameters in any PIO (including the currently executing PIO), using
+> SetRField, then **those changes will be immediately accessible using GetRField**."
+>
+> "Note that using SetRField to modify a parameter in another PIO **will not cause the
+> reset of that PIO**, the way changing a parameter in the Object Info palette causes a
+> reset of the selected object. **You have to call ResetObject on another PIO to get its
+> script to run.**"
+>
+> "What does not happen immediately is that if one PIO is executing, and it calls
+> ResetObject on another PIO, that PIO will not regenerate until after the first PIO's
+> script is done."
+> — Charles Chandler, 2008-04-29,
+> [Reset PIO from within another PIO](https://forum.vectorworks.net/topic/21745-reset-pio-from-within-another-pio/)
+
+Three consequences:
+
+1. **`SetRField` + `ResetObject` is exactly right.** `SetRField` alone does not reset;
+   the OIP's edge over a script is *only* that it also fires the reset. We fire it too.
+2. **"Verified by read-back many times" proves nothing about regeneration.** `GetRField`
+   is documented to return the new value *immediately*, before any recalculate. Our
+   read-back confirms the write landed and says nothing whatsoever about whether the
+   object regenerated.
+3. That thread's OP had our exact symptom — *"the params in the second PIO are updated,
+   but no redraw occurs in the second PIO unless I move it"* — and it was a false alarm:
+   *"I have it working. It was simply the order in which I was doing the update…
+   **SetRField and ResetObject from the param PIO works just fine.**"*
+
+Two further caveats worth carrying:
 
 - **Case matters in pop-up fields.** `SetRField.md` records a real bug where writing
   `'Condoc F - Horizontal'` instead of `'ConDoc F - Horizontal'` left an orphan value
@@ -621,7 +709,9 @@ Which are real, per the documentation:
 |---|---|---|
 | **Let the script end, then read** | **Real, and the only one that is documented as necessary.** | `ResetObject.md` remarks |
 | `HMove(h, 0, 0)` after creating a PIO from a menu command | **Real, documented, and specific to our exact scenario** — but only fires if that PIO has *Reset on Move* set in its plug-in properties, which we cannot check or change for ConnectCAD. Cheap and harmless to try. | `ReDraw.md` remarks: "If you use a .vsm or .vst to create a .vso, the object will not regen, even if you use redraw or redrawall. Try … `HMove(parmHand,0,0)`" |
-| `ReDrawAll()` before reading | Harmless. Documented to matter for *screen* state (`HideClass.md`), not for regeneration. Worth including in a probe purely to remove doubt. | `ReDrawAll.md`, `HideClass.md` |
+| `ReDrawAll()` before reading | **Harmless but useless, and mildly counter-productive.** Chandler: *"ReDrawAll will not reset anything. It merely forces a refresh of the screen… anything outside of the bounding box of the PIO (before or after the reset) will be left as is. **This can sometimes leave artifacts on the screen.**"* So a post-reset `ReDrawAll` can leave a *stale-looking* drawing that is not evidence of anything. Do not judge success by eye after one. | [topic 21745](https://forum.vectorworks.net/topic/21745-reset-pio-from-within-another-pio/); `ReDrawAll.md`, `HideClass.md` |
+| "Reset the object's class name to force a regen" | **Real historically, obsolete now, and explicitly deprecated by the author of the `ResetObject` docs:** *"While resetting the class name will cause a regen, and while this at one time was a necessary work-around in some situations, **this should no longer be necessary. ResetObject should work in all cases**, at least to the same extent as any work-around would work."* | Charles Chandler, [topic 21745](https://forum.vectorworks.net/topic/21745-reset-pio-from-within-another-pio/) |
+| `vs.SetCallBackInval(False)` around scratch geometry | Real, documented, VW2014+: *"Sets whether or not callbacks should be invalidating portions of the screen that are being changed. This should be used if you need to create temporary objects for calculation purposes."* Not a regeneration tool — but it is the **supported** way to suppress screen churn while probing, and a better-founded choice than toggling pref 6799. Remember to set it back to `True`. | `SetCallBackInval.md` |
 | `vs.ForEachObject(vs.ResetObject, "PON='<name>'")` | **Real, and the practitioner standard.** Not an incantation — it is just `ResetObject` applied by criteria, so it inherits the same deferred semantics. Its value is that it resets one whole PIO *type* per pass, matching how the interpreter batches. | JBenghiat, [forum topic 82571](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/) |
 | **"Select the object, then reset"** | **No documentation supports this.** Selection is not in the reset-trigger list. `SetSelect` + `DoMenuTextByName` is a different mechanism (it makes a *menu command* act on the object) and should not be confused with making `ResetObject` work. | Object Events trigger list |
 | `DSelectAll()` first | No documented effect on regeneration. It is real hygiene for anything that then uses a selection-based menu command. | — |
@@ -665,10 +755,42 @@ release notes list no platform-divergent scripting behaviour
 ([Vectorworks 2026](https://github.com/Vectorworks/developer-scripting/blob/main/Common/Versions/Vectorworks%202026.md);
 Python 3.9.2, same as 2025).
 
-**Our real macOS difference is not the engine — it is the trigger.** Windows has a
-native palette that presses the hotkey; macOS does not, which is what
-`MACOS-EXECUTOR.md` is about. That difference is about *how a dispatch gets started*,
-not about what regeneration does once a dispatch runs. Keep those two claims separate.
+A targeted sweep of the VectorScript, Python Scripting and SDK forums found **no
+Mac/Windows comparison of `ResetObject` behaviour, regen ordering, or
+redraw-during-script anywhere.** The reset engine appears to be platform-uniform.
+
+**But the platform splits that do exist cluster almost entirely in dialogs** — which is
+exactly where our bridge lives, and is an argument for the menu-command executor that is
+independent of regeneration:
+
+- `SetLBItemInfo` list indices are 1-based on Windows, **0-based on Mac**.
+- `SetLBColumnWidth(0)` **crashes or wedges the dialog on Mac**; `GetLBHeaderTextWidth`
+  crashes VW2021 on **Windows** but not Mac.
+- An out-of-range `vs.RemoveChoice` **hard-crashed VW2021 on macOS while Windows
+  silently tolerated it**
+  ([topic 81763](https://forum.vectorworks.net/topic/81763-dialogs-modern-crash-on-macos-when-clearing-listbox-and-strange-behaviour/)).
+  JBenghiat's comment there is the general rule for us: *"any actions in python, even if
+  they are illegal, should produce an error message and not crash Vectorworks."* On
+  macOS, they don't — they take the app down. That is the same failure signature as
+  `CONNECT-MECHANISM.md` §3.4.
+- Non-native GUI toolkits are not portable inside VW: PySide's `QMessageBox` *"crashed
+  Vectorworks immediately"* on Mac after working on Windows
+  ([topic 119289](https://forum.vectorworks.net/topic/119289-python-on-mac-tkinter-not-included/)).
+- `GetObjectVariableReal` returns different values per platform for dimension direction
+  ([topic 87944](https://forum.vectorworks.net/topic/87944-how-to-check-angle-direction-of-dimension/)) —
+  a caution for any object-variable work, including selector 1167.
+- Even the macOS *version* matters: `BuildResourceListN` /
+  `GetActualNameFromResourceList` work on Sequoia 15.7.3 and fail on Tahoe 26.1, still
+  unresolved as of January 2026
+  ([topic 130869](https://forum.vectorworks.net/topic/130869-issues-with-importing-resources-on-latest-macos/)).
+  We use `BuildResourceListN` in the socket-seeding path (`CONNECT-MECHANISM.md` §2.1) —
+  check the host macOS version before blaming our code.
+
+**So: the engine is not the macOS problem; the dialog is.** Windows has a native palette
+that presses the hotkey and macOS does not, which is what `MACOS-EXECUTOR.md` is about —
+that difference is about *how a dispatch gets started*. Keep the two claims separate, but
+note that the evidence above independently supports getting off `RunLayoutDialog` on
+macOS regardless of how §2.3 turns out.
 
 ---
 
@@ -683,6 +805,7 @@ we crashed Vectorworks last time, and it destroys the ability to attribute the r
 | **2** | Add an **ordinary-object control** (a `Rect`) to every probe, and pin the view to Top/Plan. | Establishes whether `GetBBox` is trustworthy in the context at all, and removes the documented view-dependence. | None | `GetBBox.md` |
 | **3** | Repeat the **same `ResetObject` in N successive dispatches** and watch for change between them. | Regeneration is batched one pass per PIO type; a Device→Circuit→Socket chain is documented to stall on the second hop back. Successive dispatches walk the chain. Free for a batch bridge. | None | `ResetObject.md` remarks (jack/cable/splitter) |
 | **4** | Stop using `GetBBox` as the oracle. Use `vs.FInGroup(h)` / child count, and `CC_GetCircuitSource`. | Child contents are produced *by* the recalculate; they are a more direct witness than a projected box. `CC_*` getters are already our established ground truth. | None | Object Events; `CONNECT-MECHANISM.md` §1 |
+| **3b** | Wrap probe geometry in `vs.SetCallBackInval(False)` … `vs.SetCallBackInval(True)`. | The supported way to stop scratch objects churning the screen while you experiment. Keeps probes cheap and avoids `ReDrawAll` artifacts confusing a visual read. | Very low, provided you restore it. | `SetCallBackInval.md` |
 | **4b** | `vs.ForEachObject(vs.ResetObject, "PON='Circuit'")` — one PIO type per dispatch. | The practitioner-standard bulk reset, from Josh Benghiat. Targeted, no menu command, no document-wide cost, and it aligns with the documented per-type batching so each dispatch does one clean pass. | Very low | [forum.vectorworks.net/topic/82571](https://forum.vectorworks.net/topic/82571-reset-object-active-layer/) |
 | **5** | `vs.HMove(h, 0.0, 0.0)` immediately after creating/writing, before `ResetObject`. | Documented workaround for the exact "a .vsm created a .vso and it won't regen" case. Only effective if that PIO has Reset on Move. | Very low — a zero-distance move. | `ReDraw.md` remarks |
 | **6** | `vs.SetObjectVariableBoolean(h, 1167, True)` — **Immediate Reset** — then `ResetObject(h)`. | The only documented lever for a synchronous rather than flagged reset, and a call practitioners actually use from Python. Its "SDK parametric objects only" restriction is satisfied: ConnectCAD is compiled C++. | Low-moderate. Write-only, undocumented beyond one table row, and it changes reset *timing* — try it on a scratch stock PIO first, never first on a real circuit. | Appendix G, Plug-in Objects; [topic 117975](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/) |
@@ -701,9 +824,17 @@ we crashed Vectorworks last time, and it destroys the ability to attribute the r
 **`domain/docs/CONNECT-MECHANISM.md` §3.3** — the claim "Stock Vectorworks plug-in
 objects … also generate zero geometry from this bridge" rests on a same-script
 `GetBBox` and is **not supported by that evidence**. The observation is exactly what a
-*healthy* engine produces. §3.3 should be marked provisional pending §2.3. §3.1 and
-§3.2 (record fields written, `CC_GetCircuitSource` nil) are unaffected, and §3.2's
-cross-execution retest remains a genuine unexplained result.
+*healthy* engine produces. §3.3 should be marked provisional pending §2.3.
+
+A second, quieter correction applies across both files: **"verified by read-back" is not
+evidence of regeneration.** Chandler documents that `SetRField` changes are *"immediately
+accessible using GetRField"* — before any recalculate. Read-back confirms the write
+landed, nothing more. §3.1's conclusion ("the values persist and would show in a
+worksheet, so the drawing *reads* wired") is right for the wrong reason: it is not that
+the write is cosmetic, it is that the write is only half the operation.
+
+§3.1 and §3.2 (record fields written, `CC_GetCircuitSource` nil) are otherwise
+unaffected, and §3.2's cross-execution retest remains a genuine unexplained result.
 
 **`domain/docs/MACOS-EXECUTOR.md` §2** — "While that dialog owns the event loop
 Vectorworks does not run the parametric engine" is an inference from the same invalid
@@ -744,8 +875,30 @@ but "the Circuit PIO's bind does not fire from a record-field change alone", for
 - [forum.vectorworks.net topic 117975 — "Call redraw for plug-in object"](https://forum.vectorworks.net/topic/117975-call-redraw-for-plug-in-object/)
   (spettitt, July 2024) — object variable 1167 in Python; "that's pretty much the gamut
   of reset options"; `UpdateStyledObjects` as the working fallback.
+- [forum.vectorworks.net topic 21745 — "Reset PIO from within another PIO"](https://forum.vectorworks.net/topic/21745-reset-pio-from-within-another-pio/)
+  (Charles Chandler, April 2008) — the definitive statement on `SetRField` vs.
+  `ResetObject`, `GetRField` immediacy, `ReDrawAll` artifacts, and the deprecation of the
+  class-name-reset workaround. Chandler also wrote the `ResetObject` doc text.
+- [topic 24445](https://forum.vectorworks.net/topic/24445-how-do-you-update-redraw-drawing-during-script-execution/)
+  (klinzey, Vectorworks Inc.); [topic 12885](https://forum.vectorworks.net/topic/12885-how-to-redraw-a-plugin-object-immediately/)
+  (Koos van de Linde, unanswered); [topic 56611](https://forum.vectorworks.net/topic/56611-persistent-highlight-of-object-during-dialog/)
+  and [topic 54086](https://forum.vectorworks.net/topic/54086-dockable-dialogue-possible-instead-of-modal/)
+  (JBenghiat, drawing from an open dialog).
+- macOS-specific dialog failures: [topic 81763](https://forum.vectorworks.net/topic/81763-dialogs-modern-crash-on-macos-when-clearing-listbox-and-strange-behaviour/),
+  [topic 119289](https://forum.vectorworks.net/topic/119289-python-on-mac-tkinter-not-included/),
+  [topic 87944](https://forum.vectorworks.net/topic/87944-how-to-check-angle-direction-of-dimension/),
+  [topic 130869](https://forum.vectorworks.net/topic/130869-issues-with-importing-resources-on-latest-macos/).
+- [Progress Dialog.md](https://github.com/Vectorworks/developer-scripting/blob/main/Common/Tasks/Dialogs/Progress%20Dialog.md)
+  (Vladislav Stanev) — the reset sweep budgeted as script finish-up work.
 - The forum 403s direct fetches. Read any thread via `https://r.jina.ai/<forum-url>`;
-  that worked reliably for both threads above.
+  that worked reliably for every thread cited here.
+
+**Not cited, deliberately.** Three further platform-divergence reports surfaced only as
+forum search-listing excerpts whose thread URLs could not be recovered (the forum's
+search endpoint is JS/POST-driven): a VW2023 SP3 radio-button multi-select bug reported
+Windows-only, a mirror-image Shape-pane boolean bug reported macOS-only, and a report of
+a script completing in 0.026 s while Vectorworks then redrew for 3–4 seconds. That last
+one would corroborate §2 nicely if it could be verified. None are relied on above.
 - `/Applications/Vectorworks 2026/Workspaces/ConnectCAD.vww` — the verified universal
   menu name `Reset_x20All_x20Plug_x2dIns`.
 - Local: `vwx-plugin/vs_index.json` (3078 functions),
