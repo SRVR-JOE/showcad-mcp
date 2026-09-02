@@ -76,8 +76,8 @@ START_BRIDGE_HINT = (
 )
 
 
-def _load_call():
-    """Import call() from the sibling vwx_cli.py without depending on cwd."""
+def _load_cli():
+    """Import the sibling vwx_cli.py without depending on cwd."""
     path = HERE / "vwx_cli.py"
     if not path.exists():
         print("FATAL: %s not found — vw_probe.py needs it for the bridge "
@@ -86,7 +86,7 @@ def _load_call():
     spec = importlib.util.spec_from_file_location("vwx_cli", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    return mod.call
+    return mod
 
 
 # ── in-Vectorworks script bodies ────────────────────────────────────────────
@@ -464,9 +464,26 @@ def main(argv=None):
                          "deployed one (default: auto — try all three).")
     args = ap.parse_args(argv)
 
-    call = _load_call()
+    cli = _load_cli()
 
-    # ── reachability first: fail clean, never traceback ───────────────────
+    # ── is the listener really Vectorworks? ───────────────────────────────
+    # vwx_cli refuses to talk to a test double squatting on the port. Check it
+    # ONCE here rather than on every call (it shells out to lsof + ps), then
+    # run the rest of the session with verify=False.
+    try:
+        verified = cli.assert_real_vectorworks()
+    except RuntimeError as e:
+        # The guard's message is the actionable one; the start-the-bridge hint
+        # would be actively misleading here, because something IS listening.
+        print("REFUSING TO PROBE: %s" % e, file=sys.stderr)
+        return 2
+    except Exception:
+        verified = None
+
+    def call(cmd, params=None, timeout=180.0):
+        return cli.call(cmd, params, timeout=timeout, verify=False)
+
+    # ── reachability: fail clean, never traceback ─────────────────────────
     try:
         pong = call("ping", {}, timeout=10.0)
     except (ConnectionRefusedError, ConnectionError, socket.timeout, OSError) as e:
@@ -490,6 +507,7 @@ def main(argv=None):
         "probe_version": 1,
         "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
         "read_only": True,
+        "listener_verified_as_vectorworks": verified,
         "ping": pong,
     }
     p.flush()
@@ -526,7 +544,7 @@ def _summary(p):
     def E(x, n=240):
         return " ".join(str(x).split())[:n]
 
-    def L(x):
+    def rows(x):
         """Rows as a list, whether the verb returned a list or a dict."""
         if isinstance(x, dict):
             return list(x.values())
@@ -548,10 +566,10 @@ def _summary(p):
     W("  vers : %s" % (doc.get("vw_version") or ldoc.get("version")))
     if isinstance(lay, dict) and lay.get("layers"):
         W("  layers (%d):" % lay.get("layer_count", 0))
-        for L in lay["layers"]:
+        for row in lay["layers"]:
             W("    %-34s %-7s objs=%-6s vis=%s"
-              % (L.get("name"), L.get("kind"), L.get("object_count"),
-                 L.get("visible")))
+              % (row.get("name"), row.get("kind"), row.get("object_count"),
+                 row.get("visible")))
     elif isinstance(lay, dict) and lay.get("error"):
         W("  layers: ERROR %s" % E(lay["error"], 200))
 
@@ -606,12 +624,12 @@ def _summary(p):
             continue
         W("  objects walked: %s   record formats: %s"
           % (d.get("objects_walked"), d.get("record_format_count")))
-        census = L(d.get("pio_census"))
+        census = rows(d.get("pio_census"))
         if census:
             W("  PIO census (the PON namespace, discovered not assumed):")
             for row in census[:25]:
                 W("    %-32s n=%s" % (row.get("pio_name"), row.get("count")))
-        fmts = L(d.get("record_formats"))
+        fmts = rows(d.get("record_formats"))
         if fmts:
             W("  record formats (the REC namespace) — first 25:")
             for f in fmts[:25]:
@@ -640,7 +658,7 @@ def _summary(p):
                 else:
                     W("    %-24s NOT FOUND  near=%s  rec_exists=%s"
                       % (pon, e.get("near_matches"), e.get("rec_constant_found")))
-        for n in L(d.get("notes")):
+        for n in rows(d.get("notes")):
             W("  note: %s" % E(n, 200))
 
     # ── read-only enforcement ─────────────────────────────────────────────
